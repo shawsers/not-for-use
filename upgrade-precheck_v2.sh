@@ -1,5 +1,5 @@
 #!/bin/bash
-#Upgrade pre-check script - August 24, 2021
+#Upgrade pre-check script - August 26, 2021
 echo " "
 RED=`tput setaf 1`
 WHITE=`tput setaf 7`
@@ -29,7 +29,7 @@ check_space(){
     echo "${WHITE}****************************"
     echo "${WHITE}Checking for free disk space..."
     #df -h | egrep -v "overlay|shm"
-    if [[ $(df | egrep -v "overlay|shm" | grep "/var$" | awk {'print $4'}) > 15000000 ]]; then
+    if [[ $(df | egrep -v "overlay|shm" | grep "/var$" | awk {'print $4'}) > 15728640 ]]; then
         if [[ ${VERBOSE} = 1 ]]; then
             echo "${GREEN}There's enough disk space in /var to proceed with the upgrade"
         fi
@@ -43,7 +43,7 @@ check_space(){
             sudo docker system df
             echo "${WHITE}To reclaim space from un-used docker images above you need to confirm the previous version of Turbonomic images installed"
             echo "Run the command ${YELLOW}'sudo docker images | grep turbonomic/auth'${WHITE} to find the previous versions"
-            echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 7.22.0 | awk '{print $3}'\`; do sudo docker rmi $i;done'${WHITE} replacing ${YELLOW}'7.22.0'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space"
+            echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 7.22.0 | awk '{print $3}'\`; do sudo docker rmi \$i;done'${WHITE} replacing ${YELLOW}'7.22.0'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space"
             echo "${WHITE}***************************"
         fi
         echo "${RED}Disk space checks FAILED"

@@ -17,7 +17,7 @@ echo "${GREEN}Reclaimable space list below - By deleting un-used docker images${
 sudo docker system df
 echo "${GREEN}To reclaim space from un-used docker images above you need to confirm the previous version of Turbonomic images installed"
 echo "Run the command ${WHITE}'sudo docker images | grep turbonomic/auth'${GREEN} to find the previous versions"
-echo "Run the command ${WHITE}'for i in \`sudo docker images | grep 7.22.0 | awk '{print $3}'\`; do sudo docker rmi $i;done'${GREEN} replacing ${WHITE}'7.22.0'${GREEN} with the old previous versions of the docker images installed to be removed to clear up the required disk space"
+echo "Run the command ${WHITE}'for i in \`sudo docker images | grep 7.22.0 | awk '{print $3}'\`; do sudo docker rmi \$i;done'${GREEN} replacing ${WHITE}'7.22.0'${GREEN} with the old previous versions of the docker images installed to be removed to clear up the required disk space"
 echo "${WHITE}***************************"
 echo " "
 read -p "${GREEN}Are you using a proxy to connect to the internet on this Turbonomic instance (y/n)? " CONT

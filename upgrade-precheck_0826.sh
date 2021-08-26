@@ -5,7 +5,7 @@ RED=`tput setaf 1`
 WHITE=`tput setaf 7`
 GREEN=`tput setaf 2`
 BLUE=`tput setaf 4`
-NC=`tput sgr0` #No Color
+NC=`tput sgr0`
 echo "${GREEN}Starting Upgrade Pre-check..."
 echo " "
 echo "${WHITE}Checking for free disk space..."

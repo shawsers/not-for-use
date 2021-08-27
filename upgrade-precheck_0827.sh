@@ -26,31 +26,31 @@ then
     read -p "${WHITE}What is the proxy name or IP and port you use?....example https://proxy.server.com:8080 " P_NAME_PORT
     echo " "
     echo "${WHITE}Checking endpoints for ONLINE upgrade ONLY using proxy provided..."
-    curl --proxy $P_NAME_PORT https://index.docker.io --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached index.docker.io" || echo "${RED}CANNOT REACH index.docker.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl --proxy $P_NAME_PORT auth.docker.io --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached auth.docker.io" || echo "${RED}CANNOT REACH auth.docker.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl --proxy $P_NAME_PORT https://registry-1.docker.io --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached registry-1.docker.io" || echo "${RED}CANNOT REACH registry-1.docker.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl --proxy $P_NAME_PORT production.cloudflare.docker.com --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached production.cloudflare.docker.com" || echo "${RED}CANNOT REACH production.cloudflare.docker.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl --proxy $P_NAME_PORT https://raw.githubusercontent.com --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached raw.githubusercontent.com" || echo "${RED}CANNOT REACH raw.githubusercontent.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl --proxy $P_NAME_PORT https://github.com --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached github.com" || echo "${RED}CANNOT REACH github.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl --proxy $P_NAME_PORT https://download.vmturbo.com/appliance/download/updates/8.2.0/onlineUpgrade.sh --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached download.vmturbo.com" || echo "${RED}CANNOT REACH download.vmturbo.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl --proxy $P_NAME_PORT https://yum.mariadb.org --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached https://yum.mariadb.org" || echo "${RED}CANNOT REACH https://yum.mariadb.org - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl --proxy $P_NAME_PORT https://packagecloud.io --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached https://packagecloud.io" || echo "${RED}CANNOT REACH https://packagecloud.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl --proxy $P_NAME_PORT https://download.postgresql.org --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached https://download.postgresql.org" || echo "${RED}CANNOT REACH https://download.postgresql.org - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl --proxy $P_NAME_PORT https://yum.postgresql.org --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached https://yum.postgresql.org" || echo "${RED}CANNOT REACH https://yum.postgresql.org - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
+    if [[ $(curl --proxy $P_NAME_PORT https://index.docker.io --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached index.docker.io"; else echo "${RED}CANNOT REACH index.docker.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl --proxy $P_NAME_PORT auth.docker.io --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached auth.docker.io"; else echo "${RED}CANNOT REACH auth.docker.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl --proxy $P_NAME_PORT https://registry-1.docker.io --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached registry-1.docker.io"; else echo "${RED}CANNOT REACH registry-1.docker.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl --proxy $P_NAME_PORT production.cloudflare.docker.com --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then  echo "${GREEN}SUCCESSFULLY reached production.cloudflare.docker.com"; else echo "${RED}CANNOT REACH production.cloudflare.docker.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl --proxy $P_NAME_PORT https://raw.githubusercontent.com --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached raw.githubusercontent.com"; else echo "${RED}CANNOT REACH raw.githubusercontent.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl --proxy $P_NAME_PORT https://github.com --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached github.com"; else echo "${RED}CANNOT REACH github.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl --proxy $P_NAME_PORT https://download.vmturbo.com/appliance/download/updates/8.2.0/onlineUpgrade.sh --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached download.vmturbo.com"; else echo "${RED}CANNOT REACH download.vmturbo.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl --proxy $P_NAME_PORT https://yum.mariadb.org --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached https://yum.mariadb.org"; else echo "${RED}CANNOT REACH https://yum.mariadb.org - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl --proxy $P_NAME_PORT https://packagecloud.io --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached https://packagecloud.io"; else echo "${RED}CANNOT REACH https://packagecloud.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl --proxy $P_NAME_PORT https://download.postgresql.org --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached https://download.postgresql.org"; else echo "${RED}CANNOT REACH https://download.postgresql.org - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl --proxy $P_NAME_PORT https://yum.postgresql.org --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached https://yum.postgresql.org"; else echo "${RED}CANNOT REACH https://yum.postgresql.org - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
     echo "${WHITE}****************************"
 else
     echo "${WHITE}Checking endpoints for ONLINE upgrade ONLY..."
-    curl https://index.docker.io --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached index.docker.io" || echo "${RED}CANNOT REACH index.docker.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl auth.docker.io --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached auth.docker.io" || echo "${RED}CANNOT REACH auth.docker.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl https://registry-1.docker.io --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached registry-1.docker.io" || echo "${RED}CANNOT REACH registry-1.docker.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl production.cloudflare.docker.com --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached production.cloudflare.docker.com" || echo "${RED}CANNOT REACH production.cloudflare.docker.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl https://raw.githubusercontent.com --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached raw.githubusercontent.com" || echo "${RED}CANNOT REACH raw.githubusercontent.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl https://github.com --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached github.com" || echo "${RED}CANNOT REACH github.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl https://download.vmturbo.com/appliance/download/updates/8.2.0/onlineUpgrade.sh --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached download.vmturbo.com" || echo "${RED}CANNOT REACH download.vmturbo.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl https://yum.mariadb.org --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached https://yum.mariadb.org" || echo "${RED}CANNOT REACH https://yum.mariadb.org - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl https://packagecloud.io --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached https://packagecloud.io" || echo "${RED}CANNOT REACH https://packagecloud.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl https://download.postgresql.org --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached https://download.postgresql.org" || echo "${RED}CANNOT REACH https://download.postgresql.org - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
-    curl https://yum.postgresql.org --max-time 30 -s -o /dev/null && echo "${GREEN}SUCCESSFULLY reached https://yum.postgresql.org" || echo "${RED}CANNOT REACH https://yum.postgresql.org - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
+    if [[ $(curl https://index.docker.io --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached index.docker.io"; else echo "${RED}CANNOT REACH index.docker.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl auth.docker.io --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached auth.docker.io"; else echo "${RED}CANNOT REACH auth.docker.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl https://registry-1.docker.io --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached registry-1.docker.io"; else echo "${RED}CANNOT REACH registry-1.docker.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl production.cloudflare.docker.com --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached production.cloudflare.docker.com"; else echo "${RED}CANNOT REACH production.cloudflare.docker.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl https://raw.githubusercontent.com --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached raw.githubusercontent.com"; else echo "${RED}CANNOT REACH raw.githubusercontent.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl https://github.com --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached github.com"; else echo "${RED}CANNOT REACH github.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl https://download.vmturbo.com/appliance/download/updates/8.2.0/onlineUpgrade.sh --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached download.vmturbo.com"; else echo "${RED}CANNOT REACH download.vmturbo.com - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl https://yum.mariadb.org --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached https://yum.mariadb.org"; else echo "${RED}CANNOT REACH https://yum.mariadb.org - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl https://packagecloud.io --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached https://packagecloud.io"; else echo "${RED}CANNOT REACH https://packagecloud.io - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl https://download.postgresql.org --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached https://download.postgresql.org"; else echo "${RED}CANNOT REACH https://download.postgresql.org - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
+    if [[ $(curl https://yum.postgresql.org --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then echo "${GREEN}SUCCESSFULLY reached https://yum.postgresql.org"; else echo "${RED}CANNOT REACH https://yum.postgresql.org - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"; fi
     echo "${WHITE}****************************"
 fi
 
@@ -83,11 +83,12 @@ echo " "
 echo "Checking for expired Kubernetes certificates..."
 echo "${GREEN}Checking all certs now...${WHITE}"
 kubeVersion=$(/usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
-if [ $kubeVersion -ge 20 ]
-then
+if [[ $kubeVersion -ge 20 ]]; then
     sudo /usr/local/bin/kubeadm certs check-expiration
-else
+elif [[ $kubeVersion -ge 15 ]]; then
     sudo /usr/local/bin/kubeadm alpha certs check-expiration
+else
+    sudo find /etc/kubernetes/pki/ -type f -name "*.crt" -print|egrep -v 'ca.crt$'|xargs -L 1 -t  -i bash -c 'openssl x509  -noout -text -in {}|grep After'
 fi
 echo "${GREEN}Please validate the EXPIRES dates above, ${RED}if the EXPIRES dates listed above is before current date please run the script kubeNodeCertUpdate.sh in /opt/local/bin to renew the expired certs before upgrading"
 echo "${WHITE}*****************************"

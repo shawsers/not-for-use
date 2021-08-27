@@ -5,20 +5,28 @@ RED=`tput setaf 1`
 WHITE=`tput setaf 7`
 GREEN=`tput setaf 2`
 BLUE=`tput setaf 4`
+YELLOW=`tput setaf 3`
 NC=`tput sgr0` # No Color
 echo "${GREEN}Starting Upgrade Pre-check..."
 echo " "
 echo "${WHITE}Checking for free disk space..."
-df -h | egrep -v "overlay|shm"
-echo "${GREEN}Please verify disk space above - ${RED}ensure that /var has at least 15GB free - if not please remove un-used docker images to clear enough space"
-echo "${WHITE}***************************"
-echo " "
-echo "${GREEN}Reclaimable space list below - By deleting un-used docker images${WHITE}"
-sudo docker system df
-echo "${GREEN}To reclaim space from un-used docker images above you need to confirm the previous version of Turbonomic images installed"
-echo "Run the command ${WHITE}'sudo docker images | grep turbonomic/auth'${GREEN} to find the previous versions"
-echo "Run the command ${WHITE}'for i in \`sudo docker images | grep 7.22.0 | awk '{print $3}'\`; do sudo docker rmi \$i;done'${GREEN} replacing ${WHITE}'7.22.0'${GREEN} with the old previous versions of the docker images installed to be removed to clear up the required disk space"
-echo "${WHITE}***************************"
+if [[ $(df | egrep -v "overlay|shm" | grep "/var$" | awk {'print $4'}) > 15728640 ]]; then
+    df -h | egrep -v "overlay|shm"
+    echo "${GREEN}PASSED - There's enough disk space in /var to proceed with the upgrade"
+    echo "${WHITE}***************************"
+else
+    df -h | egrep -v "overlay|shm"
+    echo "${WHITE}***************************"
+    echo "${RED}FAILED - /var has less than 15GB free - disk space will need to be cleared up before upgrading"
+    echo "${WHITE}***************************"
+    echo " "
+    echo "${WHITE}Reclaimable space list below - By deleting un-used docker images${WHITE}"
+    sudo docker system df
+    echo "${WHITE}To reclaim space from un-used docker images above you need to confirm the previous version of Turbonomic images installed"
+    echo "Run the command ${YELLOW}'sudo docker images | grep turbonomic/auth'${WHITE} to find the previous versions"
+    echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 7.22.0 | awk '{print $3}'\`; do sudo docker rmi \$i;done'${WHITE} replacing ${YELLOW}'7.22.0'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space"
+    echo "${WHITE}***************************"
+fi
 echo " "
 read -p "${GREEN}Are you using a proxy to connect to the internet on this Turbonomic instance (y/n)? " CONT
 if [[ "$CONT" =~ ^([yY][eE][sS]|[yY])$ ]]

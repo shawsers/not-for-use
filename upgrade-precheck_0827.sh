@@ -12,7 +12,7 @@ echo " "
 echo "${WHITE}Checking for free disk space..."
 if [[ $(df | egrep -v "overlay|shm" | grep "/var$" | awk {'print $4'}) > 15728640 ]]; then
     df -h | egrep -v "overlay|shm"
-    echo "${GREEN}PASSED - There's enough disk space in /var to proceed with the upgrade"
+    echo "${GREEN}PASSED - There's more than 15GB free disk space in /var to proceed with the upgrade"
     echo "${WHITE}***************************"
 else
     df -h | egrep -v "overlay|shm"
@@ -66,6 +66,29 @@ echo " "
 echo "Checking MariaDB status..."
 echo "${GREEN}Checking if the MariaDB service is running...${WHITE}"
 MSTATUS="$(systemctl is-active mariadb)"
+case ${MSTATUS} in 
+        active)
+                echo "${GREEN}MariaDB service is running"
+                echo "${WHITE}Checking MariaDB version"
+                MVERSION=$(systemctl list-units --all -t service --full --no-legend "mariadb.service" | awk {'print $6'})
+                # Compare version (if 10.5.9 is the output, that means the version is either equals or above this)
+                VERSION_COMPARE=$(echo -e "10.5.9\n${MVERSION}" | sort -V | head -n1)
+                if [[ ${VERSION_COMPARE} = "10.5.9" ]]; then
+                    echo "${GREEN}PASSED - MariaDB checks"
+                else                    
+                    echo "${RED}The version of MariaDB is below version 10.5.9 you will need to upgrade it post Turbonomic upgrade following the steps in the install guide"
+                    echo "${RED}FAILED - MariaDB checks"
+                fi
+                ;;
+        unknown)
+                echo "${WHITE}MariaDB service is not installed, precheck skipped"
+                echo "${GREEN}PASSED - MariaDB checks"
+                ;;
+        *)
+                echo "${RED}MariaDB service is not running....please resolve before upgrading"
+                echo "${RED}FAILED - MariaDB checks"
+                ;;
+esac
 if [ "${MSTATUS}" = "active" ]; then
     echo "MariaDB service is running"
     echo "${GREEN}Checking MariaDB version${WHITE}"

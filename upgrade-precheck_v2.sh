@@ -36,7 +36,7 @@ check_space(){
         echo "${GREEN}Disk space check PASSED"
     else
         if [[ ${VERBOSE} = 1 ]]; then
-            "${RED}/var has less than 15GB free - if needed remove un-used docker images to clear enough space"
+            echo "${RED}/var has less than 15GB free - if needed remove un-used docker images to clear enough space"
             echo "${WHITE}***************************"
             echo " "
             echo "${WHITE}Reclaimable space list below - By deleting un-used docker images${WHITE}"

@@ -114,7 +114,7 @@ echo " "
 echo "Checking if root password is expired or set to expire..."
 echo "${GREEN}root account details below${WHITE}"
 sudo chage -l root
-echo "${GREEN}Please validate the expiry dates above, ${RED}if expired or not set please set/reset the password before proceeding"
+echo "${YELLOW}Please validate the expiry dates above, ${RED}if expired or not set please set/reset the password before proceeding"
 echo "${WHITE}*****************************"
 echo " "
 echo "${GREEN}Checking if NTP is enabled for timesync...${WHITE}"
@@ -127,7 +127,7 @@ echo "${GREEN}Checking list of NTP servers being used for timesync (if enabled a
 cat /etc/chrony.conf | grep server
 echo "${GREEN}Current date, time and timezone configured (default is UTC time)...${WHITE}"
 date
-echo "${GREEN}Please validate NTP, TIME and DATE configuration above if it is required, ${RED}if not enabled or correct and it is required please resolve by reviewing the Install Guide for steps to Sync Time"
+echo "${YELLOW}Please validate NTP, TIME and DATE configuration above if it is required, ${RED}if not enabled or correct and it is required please resolve by reviewing the Install Guide for steps to Sync Time"
 echo "${WHITE}*****************************"
 echo " "
 echo "${GREEN}Checking for any Turbonomic pods not ready and running...${WHITE}"
@@ -139,9 +139,9 @@ else
     kubectl get pod -n turbonomic | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME"
     kubectl get pod -n default | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME"
 fi
-echo "${GREEN}Please resolve issues with the pods listed above (if any), ${RED}if you cannot resolve on your own **please contact support**"
+echo "${YELLOW}Please resolve issues with the pods listed above (if any), ${RED}if you cannot resolve on your own **please contact support**"
 echo "${WHITE}*****************************"
 echo " "
-echo "${GREEN}Please take time to review and resolve any issues above before proceeding with the upgrade, ${RED}if you cannot resolve **please contact support**"
+echo "${YELLOW}Please take time to review and resolve any issues above before proceeding with the upgrade, ${RED}if you cannot resolve **please contact support**"
 echo " "
 echo "${GREEN}End of Upgrade Pre-Check${WHITE}"

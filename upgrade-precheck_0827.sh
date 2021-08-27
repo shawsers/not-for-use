@@ -89,23 +89,12 @@ case ${MSTATUS} in
                 echo "${RED}FAILED - MariaDB checks"
                 ;;
 esac
-if [ "${MSTATUS}" = "active" ]; then
-    echo "MariaDB service is running"
-    echo "${GREEN}Checking MariaDB version${WHITE}"
-    systemctl list-units --all -t service --full --no-legend "mariadb.service"
-    echo "If the version of MariaDB is below version 10.5.9 you will also need to upgrade it post Turbonomic upgrade following the steps in the install guide"
-elif [ "${MSTATUS}" = "unknown" ]; then
-    echo "MariaDB service is not installed, precheck skipped"
-else 
-    echo "${RED}MariaDB service is not running....please resolve before upgrading"  
-fi
-#sudo systemctl status mariadb | grep Active
 echo "${GREEN}Checking if the Kubernetes service is running...${WHITE}"
 CSTATUS="$(systemctl is-active kubelet)"
 if [ "${CSTATUS}" = "active" ]; then
-    echo "Kubernetes service is running..."
+    echo "PASSED - Kubernetes service is running..."
 else 
-    echo "${RED}Kubernetes service is not running....please resolve before upgrading"  
+    echo "${RED}FAILED - Kubernetes service is not running....please resolve before upgrading"  
 fi
 #sudo systemctl status kubelet | grep Active
 echo "${GREEN}Please ensure the services above are running, ${RED}if they are not active (running) please resolve before proceeding"

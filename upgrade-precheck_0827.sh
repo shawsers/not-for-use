@@ -1,5 +1,5 @@
 #!/bin/bash
-#Upgrade pre-check script - July 27, 2021
+#Upgrade pre-check script - Aug 27, 2021
 echo " "
 RED=`tput setaf 1`
 WHITE=`tput setaf 7`

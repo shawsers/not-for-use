@@ -89,19 +89,17 @@ case ${MSTATUS} in
                 echo "${RED}FAILED - MariaDB checks"
                 ;;
 esac
-echo "${GREEN}Checking if the Kubernetes service is running...${WHITE}"
+echo "${WHITE}Checking if the Kubernetes service is running..."
 CSTATUS="$(systemctl is-active kubelet)"
 if [ "${CSTATUS}" = "active" ]; then
-    echo "PASSED - Kubernetes service is running..."
+    echo "${GREEN}PASSED - Kubernetes service is running..."
 else 
     echo "${RED}FAILED - Kubernetes service is not running....please resolve before upgrading"  
 fi
 #sudo systemctl status kubelet | grep Active
-echo "${GREEN}Please ensure the services above are running, ${RED}if they are not active (running) please resolve before proceeding"
 echo "${WHITE}****************************"
 echo " "
 echo "Checking for expired Kubernetes certificates..."
-echo "${GREEN}Checking all certs now...${WHITE}"
 kubeVersion=$(/usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
 if [[ $kubeVersion -ge 20 ]]; then
     sudo /usr/local/bin/kubeadm certs check-expiration
@@ -110,7 +108,7 @@ elif [[ $kubeVersion -ge 15 ]]; then
 else
     sudo find /etc/kubernetes/pki/ -type f -name "*.crt" -print|egrep -v 'ca.crt$'|xargs -L 1 -t  -i bash -c 'openssl x509  -noout -text -in {}|grep After'
 fi
-echo "${GREEN}Please validate the EXPIRES dates above, ${RED}if the EXPIRES dates listed above is before current date please run the script kubeNodeCertUpdate.sh in /opt/local/bin to renew the expired certs before upgrading"
+echo "${YELLOW}Please validate the EXPIRES dates above, ${RED}if the EXPIRES dates listed above is before current date please run the script kubeNodeCertUpdate.sh in /opt/local/bin to renew the expired certs before upgrading"
 echo "${WHITE}*****************************"
 echo " "
 echo "Checking if root password is expired or set to expire..."

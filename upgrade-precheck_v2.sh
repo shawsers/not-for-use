@@ -1,5 +1,6 @@
 #!/bin/bash
-#Upgrade pre-check script - August 26, 2021
+#Upgrade pre-check script - September 16, 2021
+#Author: CS
 echo " "
 RED=`tput setaf 1`
 WHITE=`tput setaf 7`
@@ -11,7 +12,7 @@ NC=`tput sgr0` # No Color
 VERBOSE=0
 
 usage () {
-   echo "v1.5"
+   echo "v2.0"
    echo ""
    echo "Usage:"
    echo ""
@@ -27,23 +28,27 @@ usage () {
 
 check_space(){
     echo "${WHITE}****************************"
-    echo "${WHITE}Checking for free disk space..."
-    #df -h | egrep -v "overlay|shm"
-    if [[ $(df | egrep -v "overlay|shm" | grep "/var$" | awk {'print $4'}) > 15728640 ]]; then
+    echo "Checking for free disk space..."
+    VARSPACE=$(df | egrep -v "overlay|shm")
+    if [[ ${VERBOSE} = 1 ]]; then
+        printf %s "${VARSPACE}"
+        echo " "
+    fi
+    if [[ $(printf %s "${VARSPACE}" | grep "/var$" | awk {'print $4'}) > 15728640 ]]; then
         if [[ ${VERBOSE} = 1 ]]; then
-            echo "${GREEN}There's enough disk space in /var to proceed with the upgrade"
+            echo "${GREEN}There's enough disk space in /var to proceed with the upgrade."
         fi
         echo "${GREEN}Disk space check PASSED"
     else
         if [[ ${VERBOSE} = 1 ]]; then
-            echo "${RED}/var has less than 15GB free - if needed remove un-used docker images to clear enough space"
+            echo "${RED}/var has less than 15GB free - if needed remove un-used docker images to clear enough space."
             echo "${WHITE}***************************"
             echo " "
             echo "${WHITE}Reclaimable space list below - By deleting un-used docker images${WHITE}"
             sudo docker system df
-            echo "${WHITE}To reclaim space from un-used docker images above you need to confirm the previous version of Turbonomic images installed"
-            echo "Run the command ${YELLOW}'sudo docker images | grep turbonomic/auth'${WHITE} to find the previous versions"
-            echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 7.22.0 | awk '{print $3}'\`; do sudo docker rmi \$i;done'${WHITE} replacing ${YELLOW}'7.22.0'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space"
+            echo "${WHITE}To reclaim space from un-used docker images above you need to confirm the previous version of Turbonomic images installed:"
+            echo "Run the command ${YELLOW}'sudo docker images | grep turbonomic/auth'${WHITE} to find the previous versions."
+            echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 7.22.0 | awk '{print $3}'\`; do sudo docker rmi \$i;done'${WHITE} replacing ${YELLOW}'7.22.0'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space."
             echo "${WHITE}***************************"
         fi
         echo "${RED}Disk space checks FAILED"
@@ -67,12 +72,12 @@ check_internet(){
         do
             if [[ $(curl --proxy $P_NAME_PORT ${URL} --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then
                 if [[ ${VERBOSE} = 1 ]]; then
-                    echo "${GREEN}SUCCESSFULLY reached ${URL}"
+                    echo "${GREEN}Successfully reached ${URL}"
                 fi
             else
                 NOT_REACHABLE_LIST+=( $URL )
                 if [[ ${VERBOSE} = 1 ]]; then
-                    echo "${RED}CANNOT REACH ${URL} - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
+                    echo "${RED}Cannot reach ${URL} - Do not proceed with online upgrade until this is resolved."
                 fi
             fi
         done
@@ -81,12 +86,12 @@ check_internet(){
         do
             if [[ $(curl ${URL} --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then
                 if [[ ${VERBOSE} = 1 ]]; then
-                    echo "${GREEN}SUCCESSFULLY reached ${URL}"
+                    echo "${GREEN}Successfully reached ${URL}"
                 fi
             else
                 NOT_REACHABLE_LIST+=( ${URL} )
                 if [[ ${VERBOSE} = 1 ]]; then
-                    echo "${RED}CANNOT REACH ${URL} - DO NOT PROCEED WITH ONLINE UPGRADE UNTIL THIS IS RESOLVED"
+                    echo "${RED}Cannot reach ${URL} - Do not proceed with online upgrade until this is resolved."
                 fi
             fi
         done
@@ -115,7 +120,7 @@ check_database(){
     case ${MSTATUS} in 
         active)
                 if [[ ${VERBOSE} = 1 ]]; then
-                    echo "${GREEN}MariaDB service is running"
+                    echo "${GREEN}MariaDB service is running."
                     echo "${WHITE}Checking MariaDB version"
                 fi
                 MVERSION=$(systemctl list-units --all -t service --full --no-legend "mariadb.service" | awk {'print $6'})
@@ -125,20 +130,20 @@ check_database(){
                     echo "${GREEN}MariaDB checks PASSED"
                 else                    
                     if [[ ${VERBOSE} = 1 ]]; then
-                        echo "${RED}The version of MariaDB is below version 10.5.9 you will also need to upgrade it post Turbonomic upgrade following the steps in the install guide"
+                        echo "${RED}The version of MariaDB is below version 10.5.9 you will also need to upgrade it post Turbonomic upgrade following the steps in the install guide."
                     fi
                     echo "${RED}MariaDB checks FAILED"
                 fi
                 ;;
         unknown)
                 if [[ ${VERBOSE} = 1 ]]; then
-                    echo "${WHITE}MariaDB service is not installed, precheck skipped"
+                    echo "${WHITE}MariaDB service is not installed, precheck skipped."
                 fi
                 echo "${GREEN}MariaDB checks PASSED"
                 ;;
         *)
                 if [[ ${VERBOSE} = 1 ]]; then
-                    echo "${RED}MariaDB service is not running....please resolve before upgrading"
+                    echo "${RED}MariaDB service is not running....please resolve before upgrading."
                 fi
                 echo "${RED}MariaDB checks FAILED"
                 ;;
@@ -157,7 +162,7 @@ check_kubernetes_service(){
         echo "${GREEN}Kubernetes service checks PASSED"
     else
         if [[ ${VERBOSE} = 1 ]]; then
-            echo "${RED}Kubernetes service is not running. Please resolve before upgrading"
+            echo "${RED}Kubernetes service is not running. Please resolve before upgrading."
         fi
         echo "${RED}Kubernetes service checks FAILED"
     fi
@@ -168,16 +173,243 @@ check_kubernetes_certs(){
     echo "${WHITE}****************************"
     echo "Checking for expired Kubernetes certificates..."
     echo "Checking all certs now..."
+    EXPIRED_CERTS=()
     kubeVersion=$(/usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
     if [[ $kubeVersion -ge 20 ]]; then
-        sudo /usr/local/bin/kubeadm certs check-expiration
+        CERT_OUTPUT=$(sudo /usr/local/bin/kubeadm certs check-expiration 2>/dev/null | sed -n '/CERTIFICATE/,/^CERTIFICATE AUTHORITY/{//!p;}')
+        printf %s "${CERT_OUTPUT}" |
+        while IFS= read -r LINE; do
+            CERT_DATE=$(echo ${LINE} | tr -s ' ' | cut -d ' ' -f 2-6 | xargs)
+            CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
+            NOW_EPOCH=$(date +%s)
+            # compare with today in epoch
+            if [[ ${CERT_DATE} < ${NOW_EPOCH} ]]; then
+                EXPIRED_CERTS+=( ${CERT} )
+            fi
+        done
     elif [[ $kubeVersion -ge 15 ]]; then
-        sudo /usr/local/bin/kubeadm alpha certs check-expiration
-    else
-        sudo find /etc/kubernetes/pki/ -type f -name "*.crt" -print|egrep -v 'ca.crt$'|xargs -L 1 -t  -i bash -c 'openssl x509  -noout -text -in {}|grep After'
+        CERT_OUTPUT=$(sudo /usr/local/bin/kubeadm alpha certs check-expiration 2>/dev/null | sed -n '/CERTIFICATE/,/^CERTIFICATE AUTHORITY/{//!p;}')
+        printf %s "${CERT_OUTPUT}" |
+        while IFS= read -r LINE; do
+            CERT_DATE=$(echo ${LINE} | tr -s ' ' | cut -d ' ' -f 2-6 | xargs)
+            CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
+            NOW_EPOCH=$(date +%s)
+            # compare with today in epoch
+            if [[ ${CERT_DATE} < ${NOW_EPOCH} ]]; then
+                EXPIRED_CERTS+=( ${CERT} )
+            fi
+        done
+    else # For Kubernetes below version 15 - specific handling
+        for CERT in /etc/kubernetes/pki/*.crt
+        do
+            if ! [[ ${CERT} =~ "ca.crt" ]]; then
+                CERT_DATE=$(openssl x509  -noout -text -in ${CERT} 2>/dev/null | grep After | cut -d ':' -f 2- | xargs) # from that we get the date in a proper format without trailing space
+                # convert $CERT_DATE in epoch
+                CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
+                NOW_EPOCH=$(date +%s)
+                # compare with today in epoch
+                if [[ ${CERT_DATE} < ${NOW_EPOCH} ]]; then
+                    EXPIRED_CERTS+=( ${CERT} )
+                fi
+            fi
+        done
     fi
-    echo "${GREEN}Please validate the EXPIRES dates above, ${RED}if the EXPIRES dates listed above is before current date please run the script kubeNodeCertUpdate.sh in /opt/local/bin to renew the expired certs before upgrading"
+    # final check
+    if [[ ${#EXPIRED_CERTS[@]} = 0 ]]; then
+        echo "${GREEN}Certificate checks PASSED"
+    else
+        echo "${RED}Certificate checks FAILED"
+        if [[ ${VERBOSE} = 1 ]]; then
+            echo "${WHITE}List of expired certificates:"
+            for CERT in "${EXPIRED_CERTS[@]}"
+            do
+                echo "${RED}${CERT}"
+            done
+            echo "${RED}Please run the script kubeNodeCertUpdate.sh in /opt/local/bin to renew the expired certs before upgrading."
+        fi
+    fi
     echo "${WHITE}****************************"
+}
+
+check_root_password(){
+    echo "${WHITE}*****************************"
+    echo "Checking if root password is expired or set to expire..."
+    if [[ ${VERBOSE} = 1 ]]; then
+        echo "Root account details below"
+        sudo chage -l root
+    fi
+    ACCOUNT_EXPIRATION_DATE=$(sudo chage -l root | grep "Account expires" | cut -d ':' -f 2 | xargs)
+    PASSWORD_EXPIRATION_DATE=$(sudo chage -l root | grep "Password expires" | cut -d ':' -f 2 | xargs)
+    ERRORS=()
+    case ${ACCOUNT_EXPIRATION_DATE} in 
+        never)
+            if [[ ${VERBOSE} = 1 ]]; then
+                echo "${GREEN}Root account expiration checks PASSED"
+            fi
+            ;;
+        *)
+            ACCOUNT_EXPIRATION_EPOCH=$(date +%s -d "${ACCOUNT_EXPIRATION_DATE}")
+            NOW_EPOCH=$(date +%s)
+            # compare with today in epoch
+            if [[ ${ACCOUNT_EXPIRATION_EPOCH} < ${NOW_EPOCH} ]]; then
+                if [[ ${VERBOSE} = 1 ]]; then
+                    echo "${RED}Root account is expired since ${ACCOUNT_EXPIRATION_DATE}. Please enable the account before upgrading."
+                    ERRORS+=( "Account Expired" )
+                fi
+            else
+                if [[ ${VERBOSE} = 1 ]]; then
+                    echo "${GREEN}Root account expiration checks PASSED"
+                fi
+            fi
+            ;;
+    esac
+    case ${PASSWORD_EXPIRATION_DATE} in 
+        never)
+            if [[ ${VERBOSE} = 1 ]]; then
+                echo "${GREEN}Root password expiration checks PASSED"
+            fi
+            ;;
+        *)
+            PASSWORD_EXPIRATION_EPOCH=$(date +%s -d "${PASSWORD_EXPIRATION_DATE}")
+            NOW_EPOCH=$(date +%s)
+            # compare with today in epoch
+            if [[ ${PASSWORD_EXPIRATION_EPOCH} < ${NOW_EPOCH} ]]; then
+                if [[ ${VERBOSE} = 1 ]]; then
+                    echo "${RED}Root password is expired since ${PASSWORD_EXPIRATION_DATE}. Please renew the password before upgrading."
+                    ERRORS+=( "Password Expired" )
+                fi
+            else
+                if [[ ${VERBOSE} = 1 ]]; then
+                    echo "${GREEN}Root password expiration checks PASSED"
+                fi
+            fi
+            ;;
+    esac
+    # final check
+    if [[ ${#ERRORS[@]} = 0 ]]; then
+        echo "${GREEN}Root account checks PASSED"
+    else
+        echo "${RED}Root account checks FAILED"
+    fi
+    echo "${WHITE}****************************"
+}
+
+check_time_and_date(){
+    echo "${WHITE}****************************"
+    echo "Checking time and date settings (NTP, Timezone...)"
+    ERRORS=()
+    TIMEDATECTL_OUTPUT=$(timedatectl)
+    # Is NTP enabled?
+    if [[ ${VERBOSE} = 1 ]]; then
+        printf %s "${TIMEDATECTL_OUTPUT}"
+        echo " "
+        echo "${WHITE}Checking if NTP is enabled for timesync..."
+    fi
+    NTP_ENABLED=$(printf %s "${TIMEDATECTL_OUTPUT}" | grep "NTP enabled" | cut -d ':' -f 2 | xargs)
+    if [[ ${NTP_ENABLED} != "yes" ]]; then
+        if [[ ${VERBOSE} = 1 ]]; then
+            echo "${RED}NTP is disabled."
+        fi
+        ERRORS+=( "NTP disabled" )
+    else
+        if [[ ${VERBOSE} = 1 ]]; then
+            echo "${GREEN}NTP is enabled."
+        fi
+    fi
+    # Is NTP sync?
+    if [[ ${VERBOSE} = 1 ]]; then
+        echo "${WHITE}Checking if NTP is synchronized for timesync..."
+    fi
+    NTP_SYNC=$(printf %s "${TIMEDATECTL_OUTPUT}" | grep "NTP synchronized" | cut -d ':' -f 2 | xargs)
+    if [[ ${NTP_SYNC} != "yes" ]]; then
+        if [[ ${VERBOSE} = 1 ]]; then
+            echo "${RED}NTP is not synchronized."
+        fi
+        ERRORS+=( "NTP not synchronized" )
+    else
+        if [[ ${VERBOSE} = 1 ]]; then
+            echo "${GREEN}NTP is synchronized."
+        fi
+    fi
+    # Is chronyd running?
+    CHRONYD_OUTPUT=$(sudo systemctl status chronyd 2>/dev/null)
+    if [[ ${VERBOSE} = 1 ]]; then
+        echo "${WHITE}Checking if Chronyd is running for NTP timesync..."
+        printf %s "${CHRONYD_OUTPUT}"
+        echo " "
+    fi
+    CHRONYD_RUN=$(printf %s "${CHRONYD_OUTPUT}" | grep Active | grep running)
+    if [[ -z ${CHRONYD_RUN} ]]; then
+        if [[ ${VERBOSE} = 1 ]]; then
+            echo "${RED}Chronyd is not running."
+        fi
+        ERRORS+=( "Chronyd not running" )
+    else
+        if [[ ${VERBOSE} = 1 ]]; then
+            echo "${GREEN}Chronyd is running."
+        fi
+    fi
+    # Display list of NTP servers configured and displaying date for info
+    if [[ ${VERBOSE} = 1 ]]; then
+        echo "${WHITE}Displaying list of NTP servers being used for timesync (if enabled and running)..."
+        cat /etc/chrony.conf | grep ^server
+        echo "${WHITE}Current date, time and timezone configured (default is UTC time)..."
+        date
+    fi
+    # final check
+    if [[ ${#ERRORS[@]} = 0 ]]; then
+        echo "${GREEN}Time and date settings checks PASSED"
+    else
+        echo "${RED}Time and date settings checks FAILED"
+    fi
+    echo "${WHITE}****************************"
+}
+
+check_turbonomic_pods(){
+    echo "${WHITE}*****************************"
+    echo "Checking for any Turbonomic pods not ready and running..."
+    ERRORS=()
+    if [ -f "/opt/turbonomic/kubernetes/yaml/persistent-volumes/local-storage-pv.yaml" ]; then
+        # Gluster is disabled
+        KUBE_OUTPUT=$(kubectl get pod -n turbonomic | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME")
+        if [[ ${VERBOSE} = 1 ]]; then
+            printf %s "${KUBE_OUTPUT}"
+            echo " "
+        fi
+        if [[ -z ${KUBE_OUTPUT} ]]; then
+            if [[ ${VERBOSE} = 1 ]]; then
+                echo "${GREEN}All pods are running as expected."
+            fi
+            echo "${GREEN}Turbonomic pods checks PASSED"
+        else
+            if [[ ${VERBOSE} = 1 ]]; then
+                echo "${RED}Some pods are not running as expected."
+            fi
+            echo "${RED}Turbonomic pods checks FAILED"
+        fi
+    else
+        # Gluster is enabled
+        KUBE_OUTPUT_TURBO=$(kubectl get pod -n turbonomic | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME")
+        KUBE_OUTPUT_DEFAULT=$(kubectl get pod -n default | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME")
+        if [[ ${VERBOSE} = 1 ]]; then
+            printf %s "${KUBE_OUTPUT_TURBO}"
+            echo " "
+            printf %s "${KUBE_OUTPUT_DEFAULT}"
+            echo " "
+        fi
+        if [[ -z ${KUBE_OUTPUT_TURBO} && -z ${KUBE_OUTPUT_DEFAULT} ]]; then
+            if [[ ${VERBOSE} = 1 ]]; then
+                echo "${GREEN}All pods are running as expected."
+            fi
+            echo "${GREEN}Turbonomic pods checks PASSED"
+        else
+            if [[ ${VERBOSE} = 1 ]]; then
+                echo "${RED}Some pods are not running as expected."
+            fi
+            echo "${RED}Turbonomic pods checks FAILED"
+        fi
+    fi
+    echo "${WHITE}*****************************"
 }
 
 # Main script
@@ -194,7 +426,7 @@ do
          ;;
    esac
 done
-echo "${GREEN}Starting Upgrade Pre-check..."
+echo "Starting Upgrade Pre-check..."
 echo " "
 check_space
 echo " "
@@ -205,40 +437,13 @@ echo " "
 check_kubernetes_service
 echo " "
 check_kubernetes_certs
-
-echo "${WHITE}*****************************"
 echo " "
-echo "Checking if root password is expired or set to expire..."
-echo "${GREEN}root account details below${WHITE}"
-sudo chage -l root
-echo "${GREEN}Please validate the expiry dates above, ${RED}if expired or not set please set/reset the password before proceeding"
-echo "${WHITE}*****************************"
+check_root_password
 echo " "
-echo "${GREEN}Checking if NTP is enabled for timesync...${WHITE}"
-timedatectl | grep "NTP enabled"
-echo "${GREEN}Checking if NTP is synchronized for timesync...${WHITE}"
-timedatectl | grep "NTP sync"
-echo "${GREEN}Checking if Chronyd is running for NTP timesync...${WHITE}"
-sudo systemctl status chronyd | grep Active
-echo "${GREEN}Checking list of NTP servers being used for timesync (if enabled and running)...${WHITE}"
-cat /etc/chrony.conf | grep server
-echo "${GREEN}Current date, time and timezone configured (default is UTC time)...${WHITE}"
-date
-echo "${GREEN}Please validate NTP, TIME and DATE configuration above if it is required, ${RED}if not enabled or correct and it is required please resolve by reviewing the Install Guide for steps to Sync Time"
-echo "${WHITE}*****************************"
+check_time_and_date
 echo " "
-echo "${GREEN}Checking for any Turbonomic pods not ready and running...${WHITE}"
-if [ -f "/opt/turbonomic/kubernetes/yaml/persistent-volumes/local-storage-pv.yaml" ]; then
-    gluster_enabled=false
-    kubectl get pod -n turbonomic | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME"
-else
-    gluster_enabled=true
-    kubectl get pod -n turbonomic | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME"
-    kubectl get pod -n default | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME"
-fi
-echo "${GREEN}Please resolve issues with the pods listed above (if any), ${RED}if you cannot resolve on your own **please contact support**"
-echo "${WHITE}*****************************"
+check_turbonomic_pods
 echo " "
-echo "${GREEN}Please take time to review and resolve any issues above before proceeding with the upgrade, ${RED}if you cannot resolve **please contact support**"
+echo "${WHITE}Please take time to review and resolve any issues above before proceeding with the upgrade, if you cannot resolve **please contact support**"
 echo " "
-echo "${GREEN}End of Upgrade Pre-Check${WHITE}"
+echo "End of Upgrade Pre-Check"

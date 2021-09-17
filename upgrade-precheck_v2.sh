@@ -12,7 +12,7 @@ NC=`tput sgr0` # No Color
 VERBOSE=0
 
 usage () {
-   echo "v2.01"
+   echo "v2.02"
    echo ""
    echo "Usage:"
    echo ""
@@ -177,6 +177,10 @@ check_kubernetes_certs(){
     kubeVersion=$(/usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
     if [[ $kubeVersion -ge 20 ]]; then
         CERT_OUTPUT=$(sudo /usr/local/bin/kubeadm certs check-expiration 2>/dev/null | sed -n '/CERTIFICATE/,/^CERTIFICATE AUTHORITY/{//!p;}')
+        if [[ ${VERBOSE} = 1 ]]; then
+            printf %s "${CERT_OUTPUT}"
+            echo " " 
+        fi
         printf %s "${CERT_OUTPUT}" |
         while IFS= read -r LINE; do
             CERT_DATE=$(echo ${LINE} | tr -s ' ' | cut -d ' ' -f 2-6 | xargs)
@@ -189,6 +193,10 @@ check_kubernetes_certs(){
         done
     elif [[ $kubeVersion -ge 15 ]]; then
         CERT_OUTPUT=$(sudo /usr/local/bin/kubeadm alpha certs check-expiration 2>/dev/null | sed -n '/CERTIFICATE/,/^CERTIFICATE AUTHORITY/{//!p;}')
+        if [[ ${VERBOSE} = 1 ]]; then
+            printf %s "${CERT_OUTPUT}"
+            echo " " 
+        fi
         printf %s "${CERT_OUTPUT}" |
         while IFS= read -r LINE; do
             CERT_DATE=$(echo ${LINE} | tr -s ' ' | cut -d ' ' -f 2-6 | xargs)
@@ -200,10 +208,17 @@ check_kubernetes_certs(){
             fi
         done
     else # For Kubernetes below version 15 - specific handling
+        CERT_OUTPUT_VERBOSE=()
         for CERT in /etc/kubernetes/pki/*.crt
         do
             if ! [[ ${CERT} =~ "ca.crt" ]]; then
-                CERT_DATE=$(openssl x509  -noout -text -in ${CERT} 2>/dev/null | grep After | cut -d ':' -f 2- | xargs) # from that we get the date in a proper format without trailing space
+                CERT_OUTPUT=$(openssl x509 -noout -text -in ${CERT} 2>/dev/null | grep After | xargs)
+                if [[ ${VERBOSE} = 1 ]]; then
+                    printf %s "${CERT} - ${CERT_OUTPUT}"
+                    echo " "
+                fi
+                CERT_OUTPUT_VERBOSE+=( ${CERT_OUTPUT} )
+                CERT_DATE=$(printf %s "${CERT_OUTPUT}" | grep After | cut -d ':' -f 2- | xargs) # from that we get the date in a proper format without trailing space
                 # convert $CERT_DATE in epoch
                 CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
                 NOW_EPOCH=$(date +%s)

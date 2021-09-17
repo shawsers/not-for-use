@@ -12,7 +12,7 @@ NC=`tput sgr0` # No Color
 VERBOSE=0
 
 usage () {
-   echo "v2.0"
+   echo "v2.01"
    echo ""
    echo "Usage:"
    echo ""
@@ -254,8 +254,8 @@ check_root_password(){
             if [[ ${ACCOUNT_EXPIRATION_EPOCH} < ${NOW_EPOCH} ]]; then
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${RED}Root account is expired since ${ACCOUNT_EXPIRATION_DATE}. Please enable the account before upgrading."
-                    ERRORS+=( "Account Expired" )
                 fi
+                ERRORS+=( "Account Expired" )
             else
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${GREEN}Root account expiration checks PASSED"
@@ -276,8 +276,8 @@ check_root_password(){
             if [[ ${PASSWORD_EXPIRATION_EPOCH} < ${NOW_EPOCH} ]]; then
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${RED}Root password is expired since ${PASSWORD_EXPIRATION_DATE}. Please renew the password before upgrading."
-                    ERRORS+=( "Password Expired" )
                 fi
+                ERRORS+=( "Password Expired" )
             else
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${GREEN}Root password expiration checks PASSED"

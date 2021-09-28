@@ -1,5 +1,5 @@
 #!/bin/bash
-#Upgrade pre-check script - September 27, 2021
+#Upgrade pre-check script - September 28, 2021
 #Author: CS
 echo " "
 RED=`tput setaf 1`
@@ -10,16 +10,18 @@ YELLOW=`tput setaf 3`
 NC=`tput sgr0` # No Color
 
 VERBOSE=0
+ECC=0 # Endpoints connectivity checks details
 
 usage () {
-   echo "v2.02"
+   echo "v2.03"
    echo ""
    echo "Usage:"
    echo ""
-   echo "   upgrade-precheck.sh [-v] [-h]"
+   echo "   upgrade-precheck.sh [-v] [-c] [-h]"
    echo ""
    echo "   Arguments list"
    echo "      -v: turn on verbose mode"
+   echo "      -c: show details on endpoints connectivity checks"
    echo "      -h: this help"
    echo ""
  
@@ -70,13 +72,13 @@ check_internet(){
         echo "${WHITE}Checking endpoints connectivity for ONLINE upgrade ONLY using proxy provided..."
         for URL in "${URL_LIST[@]}"
         do
-            if [[ $(curl --proxy $P_NAME_PORT ${URL} --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then
-                if [[ ${VERBOSE} = 1 ]]; then
+            if [[ $(curl --proxy $P_NAME_PORT ${URL} --max-time 10 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then
+                if [[ ${VERBOSE} = 1 || ${ECC} = 1 ]]; then
                     echo "${GREEN}Successfully reached ${URL}"
                 fi
             else
                 NOT_REACHABLE_LIST+=( $URL )
-                if [[ ${VERBOSE} = 1 ]]; then
+                if [[ ${VERBOSE} = 1 || ${ECC} = 1 ]]; then
                     echo "${RED}Cannot reach ${URL} - Do not proceed with online upgrade until this is resolved."
                 fi
             fi
@@ -84,13 +86,13 @@ check_internet(){
     else
         for URL in "${URL_LIST[@]}"
         do
-            if [[ $(curl ${URL} --max-time 30 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then
-                if [[ ${VERBOSE} = 1 ]]; then
+            if [[ $(curl ${URL} --max-time 10 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then
+                if [[ ${VERBOSE} = 1 || ${ECC} = 1 ]]; then
                     echo "${GREEN}Successfully reached ${URL}"
                 fi
             else
                 NOT_REACHABLE_LIST+=( ${URL} )
-                if [[ ${VERBOSE} = 1 ]]; then
+                if [[ ${VERBOSE} = 1 || ${ECC} = 1 ]]; then
                     echo "${RED}Cannot reach ${URL} - Do not proceed with online upgrade until this is resolved."
                 fi
             fi
@@ -101,7 +103,7 @@ check_internet(){
         echo "${GREEN}Endpoints connectivity checks PASSED"
     else
         echo "${RED}Endpoints connectivity checks FAILED"
-        if [[ ${VERBOSE} = 1 ]]; then
+        if [[ ${VERBOSE} = 1 || ${ECC} = 1 ]]; then
             echo "${WHITE}List of failing endpoints:"
             for URL in "${NOT_REACHABLE_LIST[@]}"
             do
@@ -429,12 +431,18 @@ check_turbonomic_pods(){
 
 # Main script
 # Check for arguments
-while getopts "vh" ARGUMENTS
+while getopts "vch" ARGUMENTS
 do
    case ${ARGUMENTS} in
       v)
          echo "${WHITE}Verbose Mode ON"
+         echo " "
          VERBOSE=1
+         ;;
+      c)
+         echo "${WHITE}Details for endpoints connectivity checks ON"
+         echo " "
+         ECC=1
          ;;
       h)
          usage

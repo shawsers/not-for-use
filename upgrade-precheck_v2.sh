@@ -16,7 +16,7 @@ ECC=0 # Endpoints connectivity checks details
 trap 'tput sgr0' EXIT
 
 usage () {
-   echo "v2.05"
+   echo "v2.06"
    echo ""
    echo "Usage:"
    echo ""
@@ -456,7 +456,12 @@ echo "Starting Upgrade Pre-check..."
 echo " "
 check_space
 echo " "
-check_internet
+echo "${WHITE}*****************************"
+read -p "${GREEN}Are you going to be performing an ONLINE upgrade of the Turbonomic instance (y/n)? " ONL
+echo " "
+if [[ "${ONL}" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+   check_internet    
+fi
 echo " "
 check_database
 echo " "

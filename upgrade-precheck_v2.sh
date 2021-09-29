@@ -65,7 +65,7 @@ check_space(){
 check_internet(){
     echo "${WHITE}****************************"
     echo "${WHITE}Checking endpoints connectivity for ONLINE upgrade ONLY..."
-    URL_LIST=( https://index.docker.io https://auth.docker.io https://registry-1.docker.io https://production.cloudflare.docker.com https://raw.githubusercontent.com https://github.com https://download.vmturbo.com/appliance/download/updates/8.2.7/onlineUpgrade.sh https://yum.mariadb.org https://packagecloud.io https://download.postgresql.org https://yum.postgresql.org )
+    URL_LIST=( https://index.docker.io https://auth.docker.io https://registry-1.docker.io https://production.cloudflare.docker.com https://raw.githubusercontent.com https://github.com https://download.vmturbo.com/appliance/download/updates/8.3.2/onlineUpgrade.sh https://yum.mariadb.org https://packagecloud.io https://download.postgresql.org https://yum.postgresql.org )
     NOT_REACHABLE_LIST=()
     read -p "${GREEN}Are you using a proxy to connect to the internet on this Turbonomic instance (y/n)? " CONT
     if [[ "${CONT}" =~ ^([yY][eE][sS]|[yY])$ ]]

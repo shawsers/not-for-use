@@ -36,7 +36,7 @@ check_space(){
     echo "Checking for free disk space..."
     VARSPACE=$(df | egrep -v "overlay|shm")
     if [[ ${VERBOSE} = 1 ]]; then
-        df | egrep -v "overlay|shm"
+        df -h| egrep -v "overlay|shm"
         echo " "
     fi
     if [[ $(printf %s "${VARSPACE}" | grep "/var$" | awk {'print $4'}) > 15728640 ]]; then

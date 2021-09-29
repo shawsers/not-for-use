@@ -1,5 +1,5 @@
 #!/bin/bash
-#Upgrade pre-check script - September 28, 2021
+#Upgrade pre-check script - September 29, 2021
 #Author: CS
 echo " "
 RED=`tput setaf 1`
@@ -16,7 +16,7 @@ ECC=0 # Endpoints connectivity checks details
 trap 'tput sgr0' EXIT
 
 usage () {
-   echo "v2.04"
+   echo "v2.05"
    echo ""
    echo "Usage:"
    echo ""
@@ -470,6 +470,9 @@ check_time_and_date
 echo " "
 check_turbonomic_pods
 echo " "
-echo "${WHITE}Please take time to review and resolve any issues above before proceeding with the upgrade, if you cannot resolve **please contact support**"
+if [[ ${VERBOSE} = 1 ]]; then
+   echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you cannot resolve **please contact Turbonomic support**"
+fi
+echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you need more details of any failed items re-run the script with the -v switch, if you cannot resolve **please contact Turbonomic support**"
 echo " "
 echo "End of Upgrade Pre-Check"

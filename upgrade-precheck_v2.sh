@@ -12,8 +12,11 @@ NC=`tput sgr0` # No Color
 VERBOSE=0
 ECC=0 # Endpoints connectivity checks details
 
+# Reset terminal on exit not to mess with colors
+trap 'tput sgr0' EXIT
+
 usage () {
-   echo "v2.03"
+   echo "v2.04"
    echo ""
    echo "Usage:"
    echo ""
@@ -62,12 +65,12 @@ check_space(){
 check_internet(){
     echo "${WHITE}****************************"
     echo "${WHITE}Checking endpoints connectivity for ONLINE upgrade ONLY..."
-    URL_LIST=( https://index.docker.io https://auth.docker.io https://registry-1.docker.io https://production.cloudflare.docker.com https://raw.githubusercontent.com https://github.com https://download.vmturbo.com/appliance/download/updates/8.2.7/onlineUpgrade.sh https://yum.mariadb.org https://packagecloud.io https://download.postgresql.org https://yum.postgresql.org )
+    URL_LIST=( https://index.docker.io https://auth.docker.io https://registry-1.docker.io https://production.cloudflare.docker.com https://raw.githubusercontent.com https://github.com https://download.vmturbo.com/appliance/download/updates/8.3.2/onlineUpgrade.sh https://yum.mariadb.org https://packagecloud.io https://download.postgresql.org https://yum.postgresql.org )
     NOT_REACHABLE_LIST=()
     read -p "${GREEN}Are you using a proxy to connect to the internet on this Turbonomic instance (y/n)? " CONT
     if [[ "${CONT}" =~ ^([yY][eE][sS]|[yY])$ ]]
     then
-        read -p "${WHITE}What is the proxy name or IP and port you use?....example https://proxy.server.com:8080 " P_NAME_PORT
+        read -p "${WHITE}What is the proxy name or IP and port you use?....example https://proxy.server.com:8443 " P_NAME_PORT
         echo " "
         echo "${WHITE}Checking endpoints connectivity for ONLINE upgrade ONLY using proxy provided..."
         for URL in "${URL_LIST[@]}"

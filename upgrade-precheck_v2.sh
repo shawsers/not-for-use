@@ -472,7 +472,8 @@ check_turbonomic_pods
 echo " "
 if [[ ${VERBOSE} = 1 ]]; then
    echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you cannot resolve **please contact Turbonomic support**"
+else
+   echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you need more details of any failed items re-run the script with the -v switch, if you cannot resolve **please contact Turbonomic support**"
 fi
-echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you need more details of any failed items re-run the script with the -v switch, if you cannot resolve **please contact Turbonomic support**"
 echo " "
 echo "End of Upgrade Pre-Check"

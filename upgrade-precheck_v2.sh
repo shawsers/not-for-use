@@ -1,5 +1,5 @@
 #!/bin/bash
-#Upgrade pre-check script - September 29, 2021
+#Upgrade pre-check script - October 1, 2021
 #Author: CS
 echo " "
 RED=`tput setaf 1`
@@ -16,7 +16,7 @@ ECC=0 # Endpoints connectivity checks details
 trap 'tput sgr0' EXIT
 
 usage () {
-   echo "v2.06"
+   echo "v2.07"
    echo ""
    echo "Usage:"
    echo ""
@@ -83,6 +83,7 @@ check_internet(){
                 NOT_REACHABLE_LIST+=( $URL )
                 if [[ ${VERBOSE} = 1 || ${ECC} = 1 ]]; then
                     echo "${RED}Cannot reach ${URL} - Do not proceed with online upgrade until this is resolved."
+                    echo "${RED}Please work with your IT administrators to make sure this system has access to this URL."
                 fi
             fi
         done

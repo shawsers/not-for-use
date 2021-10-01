@@ -98,6 +98,7 @@ check_internet(){
                 NOT_REACHABLE_LIST+=( ${URL} )
                 if [[ ${VERBOSE} = 1 || ${ECC} = 1 ]]; then
                     echo "${RED}Cannot reach ${URL} - Do not proceed with online upgrade until this is resolved."
+                    echo "${RED}Please work with your IT administrators to make sure this system has access to this URL."
                 fi
             fi
         done

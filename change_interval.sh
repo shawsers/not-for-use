@@ -1,0 +1,4 @@
+curl -X POST "http://10.233.6.57:8080/ScheduleService/getDiscoverySchedule" -H "accept: application/json;charset=UTF-8" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"targetId\": 74054410720384}"
+curl -X POST "http://10.233.6.57:8080/ScheduleService/getDiscoverySchedule" -H "accept: application/json;charset=UTF-8" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"targetId\": 74054411682144}"
+curl -X POST "http://10.233.6.57:8080/ScheduleService/setDiscoverySchedule" -H "accept: application/json;charset=UTF-8" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"targetId\": 74054410720384, \"fullIntervalMinutes\": 240, \"incrementalIntervalSeconds\": 12600}"
+curl -X POST "http://10.233.6.57:8080/ScheduleService/setDiscoverySchedule" -H "accept: application/json;charset=UTF-8" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"targetId\": 74054411682144, \"fullIntervalMinutes\": 240, \"incrementalIntervalSeconds\": 12600}"

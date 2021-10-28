@@ -6,7 +6,7 @@ echo "Starting script"
 # 3 - Expand GET Targets, click Try it out (top right of section)
 # 4 - Select ONPREM and Execute.
 # 5 - Scroll through the results and note the UUIDs for the vCenter category: “hypervisor” targets.
-#Now enter IP of your Turbo instance below and the UUID's of the targets above
+#Now enter IP of your Topology Processor internal IP below and the UUID's of the targets above
 #This will query to see what the existing discovery internal is
 echo "Checking discovery intervals"
 curl -X POST "http://10.233.6.57:8080/ScheduleService/getDiscoverySchedule" -H "accept: application/json;charset=UTF-8" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"targetId\": 74054410720384}"

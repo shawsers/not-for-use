@@ -12,8 +12,8 @@ echo "Checking discovery intervals"
 curl -X POST "http://10.233.6.57:8080/ScheduleService/getDiscoverySchedule" -H "accept: application/json;charset=UTF-8" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"targetId\": 74054410720384}"
 curl -X POST "http://10.233.6.57:8080/ScheduleService/getDiscoverySchedule" -H "accept: application/json;charset=UTF-8" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"targetId\": 74054411682144}"
 #This will change the discovery interval as needed - change values in mins and seconds as you like
-echo "Updating discovery intervals"
-curl -X POST "http://10.233.6.57:8080/ScheduleService/setDiscoverySchedule" -H "accept: application/json;charset=UTF-8" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"targetId\": 74054410720384, \"fullIntervalMinutes\": 10, \"incrementalIntervalSeconds\": 30}"
-curl -X POST "http://10.233.6.57:8080/ScheduleService/setDiscoverySchedule" -H "accept: application/json;charset=UTF-8" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"targetId\": 74054411682144, \"fullIntervalMinutes\": 10, \"incrementalIntervalSeconds\": 30}"
+#echo "Updating discovery intervals"
+#curl -X POST "http://10.233.6.57:8080/ScheduleService/setDiscoverySchedule" -H "accept: application/json;charset=UTF-8" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"targetId\": 74054410720384, \"fullIntervalMinutes\": 10, \"incrementalIntervalSeconds\": 30}"
+#curl -X POST "http://10.233.6.57:8080/ScheduleService/setDiscoverySchedule" -H "accept: application/json;charset=UTF-8" -H "Content-Type: application/json;charset=UTF-8" -d "{ \"targetId\": 74054411682144, \"fullIntervalMinutes\": 10, \"incrementalIntervalSeconds\": 30}"
 echo "End of script"
 #End of script

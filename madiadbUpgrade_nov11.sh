@@ -13,7 +13,7 @@ trap 'tput sgr0' EXIT
 
 #check if offline iso is mounted or not
 ISOCHECK=$(ls /mnt/iso)
-read -p "${GREEN}Are you performing OFFLINE upgrade (y/n)? " OFL
+read -p "${GREEN}Are you performing an OFFLINE upgrade (y/n)? " OFL
 echo " "
 if [[ "${OFL}" =~ ^([yY][eE][sS]|[yY])$ ]]; then
   if [ -z "$ISOCHECK" ]

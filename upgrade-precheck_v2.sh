@@ -1,5 +1,5 @@
 #!/bin/bash
-#Upgrade pre-check script - October 1, 2021
+#Upgrade pre-check script - December 7, 2021
 #Author: CS
 echo " "
 RED=`tput setaf 1`
@@ -16,7 +16,7 @@ ECC=0 # Endpoints connectivity checks details
 trap 'tput sgr0' EXIT
 
 usage () {
-   echo "v2.07"
+   echo "v2.08"
    echo ""
    echo "Usage:"
    echo ""
@@ -131,13 +131,13 @@ check_database(){
                     echo "${WHITE}Checking MariaDB version"
                 fi
                 MVERSION=$(systemctl list-units --all -t service --full --no-legend "mariadb.service" | awk {'print $6'})
-                # Compare version (if 10.5.9 is the output, that means the version is either equals or above this)
-                VERSION_COMPARE=$(echo -e "10.5.9\n${MVERSION}" | sort -V | head -n1)
-                if [[ ${VERSION_COMPARE} = "10.5.9" ]]; then
+                # Compare version (if 10.5.12 is the output, that means the version is either equals or above this)
+                VERSION_COMPARE=$(echo -e "10.5.12\n${MVERSION}" | sort -V | head -n1)
+                if [[ ${VERSION_COMPARE} = "10.5.12" ]]; then
                     echo "${GREEN}MariaDB checks PASSED"
                 else                    
                     if [[ ${VERBOSE} = 1 ]]; then
-                        echo "${RED}The version of MariaDB is below version 10.5.9 you will also need to upgrade it post Turbonomic upgrade following the steps in the install guide."
+                        echo "${RED}The version of MariaDB is below version 10.5.12 you will also need to upgrade it post Turbonomic upgrade following the steps in the install guide."
                     fi
                     echo "${RED}MariaDB checks FAILED"
                 fi

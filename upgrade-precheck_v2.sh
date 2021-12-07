@@ -1,6 +1,6 @@
 #!/bin/bash
-#Upgrade pre-check script - October 1, 2021
-#Author: CS
+#Upgrade pre-check script - December 7, 2021
+#Author: CS/JS
 echo " "
 RED=`tput setaf 1`
 WHITE=`tput setaf 7`
@@ -16,7 +16,7 @@ ECC=0 # Endpoints connectivity checks details
 trap 'tput sgr0' EXIT
 
 usage () {
-   echo "v2.07"
+   echo "v2.08"
    echo ""
    echo "Usage:"
    echo ""
@@ -131,15 +131,15 @@ check_database(){
                     echo "${WHITE}Checking MariaDB version"
                 fi
                 MVERSION=$(systemctl list-units --all -t service --full --no-legend "mariadb.service" | awk {'print $6'})
-                # Compare version (if 10.5.9 is the output, that means the version is either equals or above this)
-                VERSION_COMPARE=$(echo -e "10.5.9\n${MVERSION}" | sort -V | head -n1)
-                if [[ ${VERSION_COMPARE} = "10.5.9" ]]; then
+                # Compare version (if 10.5.12 is the output, that means the version is either equals or above this)
+                VERSION_COMPARE=$(echo -e "10.5.12\n${MVERSION}" | sort -V | head -n1)
+                if [[ ${VERSION_COMPARE} = "10.5.12" ]]; then
                     echo "${GREEN}MariaDB checks PASSED"
                 else                    
                     if [[ ${VERBOSE} = 1 ]]; then
-                        echo "${RED}The version of MariaDB is below version 10.5.9 you will also need to upgrade it post Turbonomic upgrade following the steps in the install guide."
+                        echo "${RED}The version of MariaDB is below version 10.5.12 you will also need to upgrade it post Turbonomic upgrade following the steps in the install guide."
                     fi
-                    echo "${RED}MariaDB checks FAILED"
+                    echo "${RED}MariaDB version check FAILED"
                 fi
                 ;;
         unknown)
@@ -152,7 +152,7 @@ check_database(){
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${RED}MariaDB service is not running....please resolve before upgrading."
                 fi
-                echo "${RED}MariaDB checks FAILED"
+                echo "${RED}MariaDB service check FAILED"
                 ;;
     esac
     echo "${WHITE}****************************"
@@ -194,7 +194,7 @@ check_kubernetes_certs(){
             CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
             NOW_EPOCH=$(date +%s)
             # compare with today in epoch
-            if [[ ${CERT_DATE} < ${NOW_EPOCH} ]]; then
+            if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
                 EXPIRED_CERTS+=( ${CERT} )
             fi
         done
@@ -210,7 +210,7 @@ check_kubernetes_certs(){
             CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
             NOW_EPOCH=$(date +%s)
             # compare with today in epoch
-            if [[ ${CERT_DATE} < ${NOW_EPOCH} ]]; then
+            if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
                 EXPIRED_CERTS+=( ${CERT} )
             fi
         done
@@ -230,7 +230,7 @@ check_kubernetes_certs(){
                 CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
                 NOW_EPOCH=$(date +%s)
                 # compare with today in epoch
-                if [[ ${CERT_DATE} < ${NOW_EPOCH} ]]; then
+                if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
                     EXPIRED_CERTS+=( ${CERT} )
                 fi
             fi

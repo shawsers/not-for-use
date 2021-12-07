@@ -194,7 +194,7 @@ check_kubernetes_certs(){
             CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
             NOW_EPOCH=$(date +%s)
             # compare with today in epoch
-            if [[ ${CERT_DATE} < ${NOW_EPOCH} ]]; then
+            if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
                 EXPIRED_CERTS+=( ${CERT} )
             fi
         done
@@ -210,7 +210,7 @@ check_kubernetes_certs(){
             CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
             NOW_EPOCH=$(date +%s)
             # compare with today in epoch
-            if [[ ${CERT_DATE} < ${NOW_EPOCH} ]]; then
+            if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
                 EXPIRED_CERTS+=( ${CERT} )
             fi
         done
@@ -230,7 +230,7 @@ check_kubernetes_certs(){
                 CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
                 NOW_EPOCH=$(date +%s)
                 # compare with today in epoch
-                if [[ ${CERT_DATE} < ${NOW_EPOCH} ]]; then
+                if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
                     EXPIRED_CERTS+=( ${CERT} )
                 fi
             fi

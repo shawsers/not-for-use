@@ -1,5 +1,5 @@
 #!/bin/bash
-#Upgrade pre-check script - December 7, 2021
+#Upgrade pre-check script - December 17, 2021
 #Author: CS/JS
 echo " "
 RED=`tput setaf 1`
@@ -39,7 +39,7 @@ check_space(){
         df -h | egrep -v "overlay|shm"
         echo " "
     fi
-    if [[ $(printf %s "${VARSPACE}" | grep "/var$" | awk {'print $4'}) > 15728640 ]]; then
+    if [[ $(printf %s "${VARSPACE}" | grep "/var$" | awk {'print $4'}) -ge 15728640 ]]; then
         if [[ ${VERBOSE} = 1 ]]; then
             echo "${GREEN}There's enough disk space in /var to proceed with the upgrade."
         fi
@@ -53,7 +53,7 @@ check_space(){
             sudo docker system df
             echo "${WHITE}To reclaim space from un-used docker images above you need to confirm the previous version of Turbonomic images installed:"
             echo "Run the command ${YELLOW}'sudo docker images | grep turbonomic/auth'${WHITE} to find the previous versions."
-            echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 8.1.0 | awk '{print \$3}'\`; do sudo docker rmi \$i;done'${WHITE} replacing ${YELLOW}'8.1.0'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space."
+            echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 8.2.0 | awk '{print \$3}'\`; do sudo docker rmi \$i;done'${WHITE} replacing ${YELLOW}'8.1.0'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space."
             echo "${WHITE}***************************"
         fi
         echo "${RED}Disk space checks FAILED"
@@ -65,7 +65,7 @@ check_space(){
 check_internet(){
     echo "${WHITE}****************************"
     echo "${WHITE}Checking endpoints connectivity for ONLINE upgrade ONLY..."
-    URL_LIST=( https://index.docker.io https://auth.docker.io https://registry-1.docker.io https://production.cloudflare.docker.com https://raw.githubusercontent.com https://github.com https://download.vmturbo.com/appliance/download/updates/8.3.2/onlineUpgrade.sh https://yum.mariadb.org https://packagecloud.io https://download.postgresql.org https://yum.postgresql.org )
+    URL_LIST=( https://index.docker.io https://auth.docker.io https://registry-1.docker.io https://production.cloudflare.docker.com https://raw.githubusercontent.com https://github.com https://download.vmturbo.com/appliance/download/updates/8.4.1/onlineUpgrade.sh https://yum.mariadb.org https://packagecloud.io https://download.postgresql.org https://yum.postgresql.org )
     NOT_REACHABLE_LIST=()
     read -p "${GREEN}Are you using a proxy to connect to the internet on this Turbonomic instance (y/n)? " CONT
     if [[ "${CONT}" =~ ^([yY][eE][sS]|[yY])$ ]]

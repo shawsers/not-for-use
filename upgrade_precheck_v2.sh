@@ -1,5 +1,5 @@
 #!/bin/bash
-#Upgrade pre-check script - January 12, 2022
+#Upgrade pre-check script - January 13, 2022
 #Author: CS/JS
 echo " "
 RED=`tput setaf 1`
@@ -11,20 +11,23 @@ NC=`tput sgr0` # No Color
 
 VERBOSE=0
 ECC=0 # Endpoints connectivity checks details
+SUMMARY_TABLE=0 # Summary table status
+SUMMARY=() # Summary table
 
 # Reset terminal on exit not to mess with colors
 trap 'tput sgr0' EXIT
 
 usage () {
-   echo "v2.10"
+   echo "v2.15"
    echo ""
    echo "Usage:"
    echo ""
-   echo "   upgrade-precheck.sh [-v] [-c] [-h]"
+   echo "   upgrade-precheck.sh [-v] [-c] [-s] [-h]"
    echo ""
    echo "   Arguments list"
    echo "      -v: turn on verbose mode"
    echo "      -c: show details on endpoints connectivity checks"
+   echo "      -s: display a summary table at the end of all checks"
    echo "      -h: this help"
    echo ""
  
@@ -44,6 +47,7 @@ check_space(){
             echo "${GREEN}There's enough disk space in /var to proceed with the upgrade."
         fi
         echo "${GREEN}Disk space check PASSED"
+        SUMMARY+=( "${WHITE}Disk space check | ${GREEN}PASSED" )
     else
         if [[ ${VERBOSE} = 1 ]]; then
             echo "${RED}/var has less than 15GB free - if needed remove un-used docker images to clear enough space."
@@ -57,9 +61,9 @@ check_space(){
             echo "${WHITE}***************************"
         fi
         echo "${RED}Disk space checks FAILED"
+        SUMMARY+=( "${WHITE}Disk space check | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
-    #echo "${GREEN}Please verify disk space above - ${RED}ensure that /var has at least 15GB free - if not please remove un-used docker images to clear enough space"
 }
 
 check_internet(){
@@ -106,8 +110,10 @@ check_internet(){
     # final check
     if [[ ${#NOT_REACHABLE_LIST[@]} = 0 ]]; then
         echo "${GREEN}Endpoints connectivity checks PASSED"
+        SUMMARY+=( "${WHITE}Endpoints connectivity checks | ${GREEN}PASSED" )
     else
         echo "${RED}Endpoints connectivity checks FAILED"
+        SUMMARY+=( "${WHITE}Endpoints connectivity checks | ${RED}FAILED" )
         if [[ ${VERBOSE} = 1 || ${ECC} = 1 ]]; then
             echo "${WHITE}List of failing endpoints:"
             for URL in "${NOT_REACHABLE_LIST[@]}"
@@ -135,11 +141,13 @@ check_database(){
                 VERSION_COMPARE=$(echo -e "10.5.12\n${MVERSION}" | sort -V | head -n1)
                 if [[ ${VERSION_COMPARE} = "10.5.12" ]]; then
                     echo "${GREEN}MariaDB checks PASSED"
+                    SUMMARY+=( "${WHITE}MariaDB checks | ${GREEN}PASSED" )
                 else                    
                     if [[ ${VERBOSE} = 1 ]]; then
                         echo "${RED}The version of MariaDB is below version 10.5.12 you will also need to upgrade it post Turbonomic upgrade following the steps in the install guide."
                     fi
                     echo "${RED}MariaDB version check FAILED"
+                    SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )
                 fi
                 ;;
         unknown)
@@ -147,12 +155,14 @@ check_database(){
                     echo "${WHITE}MariaDB service is not installed, precheck skipped."
                 fi
                 echo "${GREEN}MariaDB checks PASSED"
+                SUMMARY+=( "${WHITE}MariaDB checks | ${GREEN}PASSED" )
                 ;;
         *)
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${RED}MariaDB service is not running....please resolve before upgrading."
                 fi
                 echo "${RED}MariaDB service check FAILED"
+                SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )
                 ;;
     esac
     echo "${WHITE}****************************"
@@ -167,11 +177,13 @@ check_kubernetes_service(){
             echo "${GREEN}Kubernetes service is running."
         fi
         echo "${GREEN}Kubernetes service checks PASSED"
+        SUMMARY+=( "${WHITE}Kubernetes service checks | ${GREEN}PASSED" )
     else
         if [[ ${VERBOSE} = 1 ]]; then
             echo "${RED}Kubernetes service is not running. Please resolve before upgrading."
         fi
         echo "${RED}Kubernetes service checks FAILED"
+        SUMMARY+=( "${WHITE}Kubernetes service checks | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
 }
@@ -180,76 +192,101 @@ check_kubernetes_certs(){
     echo "${WHITE}****************************"
     echo "Checking for expired Kubernetes certificates..."
     echo "Checking all certs now..."
-    EXPIRED_CERTS=()
+    ERRORS=()
+    EXPIRED_CERTS=() 
     kubeVersion=$(/usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
-    if [[ $kubeVersion -ge 20 ]]; then
-        CERT_OUTPUT=$(sudo /usr/local/bin/kubeadm certs check-expiration 2>/dev/null | sed -n '/CERTIFICATE/,/^CERTIFICATE AUTHORITY/{//!p;}')
-        if [[ ${VERBOSE} = 1 ]]; then
-            printf %s "${CERT_OUTPUT}"
-            echo " " 
-        fi
-        printf %s "${CERT_OUTPUT}" |
-        while IFS= read -r LINE; do
-            CERT_DATE=$(echo ${LINE} | tr -s ' ' | cut -d ' ' -f 2-6 | xargs)
-            CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
-            NOW_EPOCH=$(date +%s)
-            # compare with today in epoch
-            if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
-                EXPIRED_CERTS+=( ${CERT} )
+    if [[ ${PIPESTATUS[0]} -eq 0 ]]; then # only if the kubectl command worked
+        if [[ $kubeVersion -ge 20 ]]; then
+            CERT_OUTPUT=$(sudo /usr/local/bin/kubeadm certs check-expiration 2>/dev/null | sed -n '/CERTIFICATE/,/^CERTIFICATE AUTHORITY/{//!p;}')
+            if [[ ${VERBOSE} = 1 ]]; then
+                printf %s "${CERT_OUTPUT}"
+                echo " " 
             fi
-        done
-    elif [[ $kubeVersion -ge 15 ]]; then
-        CERT_OUTPUT=$(sudo /usr/local/bin/kubeadm alpha certs check-expiration 2>/dev/null | sed -n '/CERTIFICATE/,/^CERTIFICATE AUTHORITY/{//!p;}')
-        if [[ ${VERBOSE} = 1 ]]; then
-            printf %s "${CERT_OUTPUT}"
-            echo " " 
-        fi
-        printf %s "${CERT_OUTPUT}" |
-        while IFS= read -r LINE; do
-            CERT_DATE=$(echo ${LINE} | tr -s ' ' | cut -d ' ' -f 2-6 | xargs)
-            CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
-            NOW_EPOCH=$(date +%s)
-            # compare with today in epoch
-            if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
-                EXPIRED_CERTS+=( ${CERT} )
-            fi
-        done
-    elif [[ $kubeVersion -lt 15 ]]; then # For Kubernetes below version 15 - specific handling
-        CERT_OUTPUT_VERBOSE=()
-        for CERT in /etc/kubernetes/pki/*.crt
-        do
-            if ! [[ ${CERT} =~ "ca.crt" ]]; then
-                CERT_OUTPUT=$(openssl x509 -noout -text -in ${CERT} 2>/dev/null | grep After | xargs)
-                if [[ ${VERBOSE} = 1 ]]; then
-                    printf %s "${CERT} - ${CERT_OUTPUT}"
-                    echo " "
+            printf %s "${CERT_OUTPUT}" |
+            while IFS= read -r LINE; do
+                if [[ ${LINE} =~ "MISSING" ]]; then # in some cases some certificates are !MISSING!
+                    CERT_NAME=$(echo ${LINE} | sed 's/!MISSING! //g')
+                    ERRORS+=( "A Kubernetes certificate is missing: ${CERT_NAME}." )
+                else
+                    CERT_DATE=$(echo ${LINE} | tr -s ' ' | cut -d ' ' -f 2-6 | xargs)
+                    CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
+                    NOW_EPOCH=$(date +%s)
+                    # compare with today in epoch
+                    if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
+                        EXPIRED_CERTS+=( ${CERT} )
+                    fi    
                 fi
-                CERT_OUTPUT_VERBOSE+=( ${CERT_OUTPUT} )
-                CERT_DATE=$(printf %s "${CERT_OUTPUT}" | grep After | cut -d ':' -f 2- | xargs) # from that we get the date in a proper format without trailing space
-                # convert $CERT_DATE in epoch
-                CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
-                NOW_EPOCH=$(date +%s)
-                # compare with today in epoch
-                if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
-                    EXPIRED_CERTS+=( ${CERT} )
-                fi
+            done
+        elif [[ $kubeVersion -ge 15 ]]; then
+            CERT_OUTPUT=$(sudo /usr/local/bin/kubeadm alpha certs check-expiration 2>/dev/null | sed -n '/CERTIFICATE/,/^CERTIFICATE AUTHORITY/{//!p;}')
+            if [[ ${VERBOSE} = 1 ]]; then
+                printf %s "${CERT_OUTPUT}"
+                echo " " 
             fi
-        done
-    else # If for any other reason the version check didn't work (configuration messed up)
-        EXPIRED_CERTS+=( "Kubernetes Cluster Services Issue" )
+            printf %s "${CERT_OUTPUT}" |
+            while IFS= read -r LINE; do
+                if [[ ${LINE} =~ "MISSING" ]]; then # in some cases some certificates are !MISSING!
+                    CERT_NAME=$(echo ${LINE} | sed 's/!MISSING! //g')
+                    ERRORS+=( "A Kubernetes certificate is missing: ${CERT_NAME}." )
+                else
+                    CERT_DATE=$(echo ${LINE} | tr -s ' ' | cut -d ' ' -f 2-6 | xargs)
+                    CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
+                    NOW_EPOCH=$(date +%s)
+                    # compare with today in epoch
+                    if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
+                        EXPIRED_CERTS+=( ${CERT} )
+                    fi
+                fi
+            done
+        elif [[ $kubeVersion -gt 0 && $kubeVersion -lt 15 ]]; then # For Kubernetes below version 15 - specific handling
+            CERT_OUTPUT_VERBOSE=()
+            for CERT in /etc/kubernetes/pki/*.crt
+            do
+                if ! [[ ${CERT} =~ "ca.crt" ]]; then
+                    CERT_OUTPUT=$(openssl x509 -noout -text -in ${CERT} 2>/dev/null | grep After | xargs)
+                    if [[ ${VERBOSE} = 1 ]]; then
+                        printf %s "${CERT} - ${CERT_OUTPUT}"
+                        echo " "
+                    fi
+                    CERT_OUTPUT_VERBOSE+=( ${CERT_OUTPUT} )
+                    CERT_DATE=$(printf %s "${CERT_OUTPUT}" | grep After | cut -d ':' -f 2- | xargs) # from that we get the date in a proper format without trailing space
+                    # convert $CERT_DATE in epoch
+                    CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
+                    NOW_EPOCH=$(date +%s)
+                    # compare with today in epoch
+                    if [[ ${CERT_EPOCH} < ${NOW_EPOCH} ]]; then
+                        EXPIRED_CERTS+=( ${CERT} )
+                    fi
+                fi
+            done
+        else # If for any other reason the version check didn't work (configuration messed up)
+            ERRORS+=( "Kubernetes version parsing error." )
+        fi
+    else # kubectl command failed - cluster is messed up?
+        ERRORS+=( "Kubectl command is failing." )
     fi
     # final check
-    if [[ ${#EXPIRED_CERTS[@]} = 0 ]]; then
+    if [[ ${#EXPIRED_CERTS[@]} = 0 && ${#ERRORS[@]} = 0 ]]; then
         echo "${GREEN}Certificate checks PASSED"
+        SUMMARY+=( "${WHITE}Certificate checks | ${GREEN}PASSED" )
     else
         echo "${RED}Certificate checks FAILED"
+        SUMMARY+=( "${WHITE}Certificate checks | ${RED}FAILED" )
         if [[ ${VERBOSE} = 1 ]]; then
-            echo "${WHITE}List of expired certificates:"
-            for CERT in "${EXPIRED_CERTS[@]}"
-            do
-                echo "${RED}${CERT}"
-            done
-            echo "${RED}Please run the script kubeNodeCertUpdate.sh in /opt/local/bin to renew the expired certs before upgrading."
+            if [[ ${#EXPIRED_CERTS[@]} != 0 ]]; then # in that case kubectl command worked but certificates are expired
+                echo "${WHITE}List of expired certificates:"
+                for CERT in "${EXPIRED_CERTS[@]}"
+                do
+                    echo "${RED}${CERT}"
+                done
+                echo "${RED}Please run the script kubeNodeCertUpdate.sh in /opt/local/bin to renew the expired certs before upgrading."
+            elif [[ ${#ERRORS[@]} != 0 ]]; then # in that case kubectl command failed
+                for MSG in "${ERRORS[@]}"
+                do
+                    echo "${RED}${MSG}"
+                done
+                echo "${RED}Please check the status of your Kubernetes cluster."
+            fi
         fi
     fi
     echo "${WHITE}****************************"
@@ -312,8 +349,10 @@ check_root_password(){
     # final check
     if [[ ${#ERRORS[@]} = 0 ]]; then
         echo "${GREEN}Root account checks PASSED"
+        SUMMARY+=( "${WHITE}Root account checks | ${GREEN}PASSED" )
     else
         echo "${RED}Root account checks FAILED"
+        SUMMARY+=( "${WHITE}Root account checks | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
 }
@@ -383,8 +422,10 @@ check_time_and_date(){
     # final check
     if [[ ${#ERRORS[@]} = 0 ]]; then
         echo "${GREEN}Time and date settings checks PASSED"
+        SUMMARY+=( "${WHITE}Time and date settings checks | ${GREEN}PASSED" )
     else
         echo "${RED}Time and date settings checks FAILED"
+        SUMMARY+=( "${WHITE}Time and date settings checks | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
 }
@@ -392,45 +433,93 @@ check_time_and_date(){
 check_turbonomic_pods(){
     echo "${WHITE}*****************************"
     echo "Checking for any Turbonomic pods not ready and running..."
-    ERRORS=()
+    FAILING_PODS=()
+    KUBECTL_TEST_COMMAND=$(kubectl version)
+    KUBECTL_TEST=$?
     if [ -f "/opt/turbonomic/kubernetes/yaml/persistent-volumes/local-storage-pv.yaml" ]; then
         # Gluster is disabled
-        KUBE_OUTPUT=$(kubectl get pod -n turbonomic | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME")
-        if [[ ${VERBOSE} = 1 ]]; then
-            printf %s "${KUBE_OUTPUT}"
-            echo " "
-        fi
-        if [[ -z ${KUBE_OUTPUT} ]]; then
-            if [[ ${VERBOSE} = 1 ]]; then
-                echo "${GREEN}All pods are running as expected."
+        KUBE_OUTPUT=$(kubectl get pods -n turbonomic | grep -v "NAME")
+        KUBE_OUTPUT_FILTERED=$(kubectl get pods -n turbonomic | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME")
+        if [[ ${KUBECTL_TEST} -eq 0 ]]; then # only if the kubectl command worked
+            if [[ -z ${KUBE_OUTPUT_FILTERED} ]]; then
+                if [[ ${VERBOSE} = 1 ]]; then
+                    printf %s "${KUBE_OUTPUT}"
+                    echo " "
+                    echo "${GREEN}All pods are running as expected."
+                fi
+                echo "${GREEN}Turbonomic pods checks PASSED"
+                SUMMARY+=( "${WHITE}Turbonomic pods checks | ${GREEN}PASSED" )
+            else
+                # Get the list of non correctly running pods
+                printf %s "${KUBE_OUTPUT_FILTERED}" |
+                while IFS= read -r LINE; do
+                    POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
+                    FAILING_PODS+=( ${POD_NAME} )
+                done
+                if [[ ${VERBOSE} = 1 ]]; then
+                    echo "${RED}Some pods are not running as expected."
+                    echo "${WHITE}List of pods not running as expected:"
+                    for POD in "${FAILING_PODS[@]}"
+                    do
+                        echo "${RED}${POD}"
+                    done
+                fi
+                echo "${RED}Turbonomic pods checks FAILED"
+                SUMMARY+=( "${WHITE}Turbonomic pods checks | ${RED}FAILED" )
             fi
-            echo "${GREEN}Turbonomic pods checks PASSED"
-        else
+        else # kubectl command failed - cluster is messed up?
             if [[ ${VERBOSE} = 1 ]]; then
-                echo "${RED}Some pods are not running as expected."
+                echo "${RED}Kubectl command is failing. Please check the status of your Kubernetes cluster."
             fi
             echo "${RED}Turbonomic pods checks FAILED"
+            SUMMARY+=( "${WHITE}Turbonomic pods checks | ${RED}FAILED" )
         fi
     else
         # Gluster is enabled
-        KUBE_OUTPUT_TURBO=$(kubectl get pod -n turbonomic | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME")
-        KUBE_OUTPUT_DEFAULT=$(kubectl get pod -n default | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME")
-        if [[ ${VERBOSE} = 1 ]]; then
-            printf %s "${KUBE_OUTPUT_TURBO}"
-            echo " "
-            printf %s "${KUBE_OUTPUT_DEFAULT}"
-            echo " "
-        fi
-        if [[ -z ${KUBE_OUTPUT_TURBO} && -z ${KUBE_OUTPUT_DEFAULT} ]]; then
-            if [[ ${VERBOSE} = 1 ]]; then
-                echo "${GREEN}All pods are running as expected."
+        KUBE_OUTPUT_TURBO=$(kubectl get pods -n turbonomic | grep -v "NAME")
+        KUBE_OUTPUT_TURBO_FILTERED=$(kubectl get pods -n turbonomic | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME")
+        if [[ ${KUBECTL_TEST} -eq 0 ]]; then # only if the kubectl command worked
+            KUBE_OUTPUT_DEFAULT=$(kubectl get pods -n default | grep -v "NAME")
+            KUBE_OUTPUT_DEFAULT_FILTERED=$(kubectl get pods -n default | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME")
+            if [[ -z ${KUBE_OUTPUT_TURBO_FILTERED} && -z ${KUBE_OUTPUT_DEFAULT_FILTERED} ]]; then
+                if [[ ${VERBOSE} = 1 ]]; then
+                    printf %s "${KUBE_OUTPUT_TURBO}"
+                    echo " "
+                    printf %s "${KUBE_OUTPUT_DEFAULT}"
+                    echo " "
+                    echo "${GREEN}All pods are running as expected."
+                fi
+                echo "${GREEN}Turbonomic pods checks PASSED"
+                SUMMARY+=( "${WHITE}Turbonomic pods checks | ${GREEN}PASSED" )
+            else
+                # Get the list of non correctly running pods
+                printf %s "${KUBE_OUTPUT_TURBO_FILTERED}" |
+                while IFS= read -r LINE; do
+                    POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
+                    FAILING_PODS+=( ${POD_NAME} )
+                done
+                printf %s "${KUBE_OUTPUT_DEFAULT_FILTERED}" |
+                while IFS= read -r LINE; do
+                    POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
+                    FAILING_PODS+=( ${POD_NAME} )
+                done
+                if [[ ${VERBOSE} = 1 ]]; then
+                    echo "${RED}Some pods are not running as expected."
+                    echo "${WHITE}List of pods not running as expected:"
+                    for POD in "${FAILING_PODS[@]}"
+                    do
+                        echo "${RED}${POD}"
+                    done
+                fi
+                echo "${RED}Turbonomic pods checks FAILED"
+                SUMMARY+=( "${WHITE}Turbonomic pods checks | ${RED}FAILED" )
             fi
-            echo "${GREEN}Turbonomic pods checks PASSED"
-        else
+        else # kubectl command failed - cluster is messed up?
             if [[ ${VERBOSE} = 1 ]]; then
-                echo "${RED}Some pods are not running as expected."
+                echo "${RED}Kubectl command is failing. Please check the status of your Kubernetes cluster."
             fi
             echo "${RED}Turbonomic pods checks FAILED"
+            SUMMARY+=( "${WHITE}Turbonomic pods checks | ${RED}FAILED" )
         fi
     fi
     echo "${WHITE}*****************************"
@@ -438,7 +527,7 @@ check_turbonomic_pods(){
 
 # Main script
 # Check for arguments
-while getopts "vch" ARGUMENTS
+while getopts "vcsh" ARGUMENTS
 do
    case ${ARGUMENTS} in
       v)
@@ -450,6 +539,11 @@ do
          echo "${WHITE}Details for endpoints connectivity checks ON"
          echo " "
          ECC=1
+         ;;
+      s)
+         echo "${WHITE}Summary table ON"
+         echo " "
+         SUMMARY_TABLE=1
          ;;
       h)
          usage
@@ -464,7 +558,7 @@ echo "${WHITE}*****************************"
 read -p "${GREEN}Are you going to be performing an ONLINE upgrade of the Turbonomic instance (y/n)? " ONL
 echo " "
 if [[ "${ONL}" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-   check_internet    
+    check_internet    
 fi
 echo " "
 check_database
@@ -479,10 +573,21 @@ check_time_and_date
 echo " "
 check_turbonomic_pods
 echo " "
+if [[ ${SUMMARY_TABLE} = 1 ]]; then
+    printf "%s\n" "${WHITE}-------------- SUMMARY TABLE --------------"
+    for MSG in "${SUMMARY[@]}"
+    do
+        NAME=$(echo ${MSG} | cut -f1 -d'|')
+        VALUE=$(echo ${MSG} | cut -f2 -d'|')
+        printf "%-40s %-40s\n" "${NAME}" "${VALUE}"
+    done
+    printf "%s\n" "${WHITE}-------------------------------------------"
+fi
+echo " "
 if [[ ${VERBOSE} = 1 ]]; then
-   echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you cannot resolve **please contact Turbonomic support**"
+    echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you cannot resolve **please contact Turbonomic support**"
 else
-   echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you need more details of any failed items re-run the script with the -v switch, if you cannot resolve **please contact Turbonomic support**"
+    echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you need more details of any failed items re-run the script with the -v switch, if you cannot resolve **please contact Turbonomic support**"
 fi
 echo " "
 echo "End of Upgrade Pre-Check"

@@ -573,12 +573,6 @@ check_time_and_date
 echo " "
 check_turbonomic_pods
 echo " "
-if [[ ${VERBOSE} = 1 ]]; then
-    echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you cannot resolve **please contact Turbonomic support**"
-else
-    echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you need more details of any failed items re-run the script with the -v switch, if you cannot resolve **please contact Turbonomic support**"
-fi
-echo " "
 if [[ ${SUMMARY_TABLE} = 1 ]]; then
     printf "%s\n" "${WHITE}-------------- SUMMARY TABLE --------------"
     for MSG in "${SUMMARY[@]}"
@@ -588,6 +582,12 @@ if [[ ${SUMMARY_TABLE} = 1 ]]; then
         printf "%-40s %-40s\n" "${NAME}" "${VALUE}"
     done
     printf "%s\n" "${WHITE}-------------------------------------------"
+fi
+echo " "
+if [[ ${VERBOSE} = 1 ]]; then
+    echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you cannot resolve **please contact Turbonomic support**"
+else
+    echo "${WHITE}Please review and resolve any FAILED issues above before proceeding with the upgrade, if you need more details of any failed items re-run the script with the -v switch, if you cannot resolve **please contact Turbonomic support**"
 fi
 echo " "
 echo "End of Upgrade Pre-Check"

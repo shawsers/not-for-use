@@ -1,5 +1,5 @@
 #!/bin/bash
-#Upgrade pre-check script - January 18, 2022
+#Upgrade pre-check script - January 19, 2022
 #Author: CS/JS
 echo " "
 RED=`tput setaf 1`
@@ -21,7 +21,7 @@ trap 'tput sgr0' EXIT
 usage () {
    echo ""
    echo "Upgrade Precheck Script"
-   echo "v2.17"
+   echo "v2.20"
    echo ""
    echo "Usage:"
    echo ""
@@ -46,7 +46,7 @@ check_space(){
         df -h | egrep -v "overlay|shm"
         echo " "
     fi
-    if [[ $(printf %s "${VARSPACE}" | grep "/var$" | awk {'print $4'}) -ge 15728640 ]]; then
+    if [[ $(printf '%s\n' "${VARSPACE}" | grep "/var$" | awk {'print $4'}) -ge 15728640 ]]; then
         if [[ ${VERBOSE} = 1 ]]; then
             echo "${GREEN}There's enough disk space in /var to proceed with the upgrade."
         fi
@@ -203,10 +203,9 @@ check_kubernetes_certs(){
         if [[ $kubeVersion -ge 20 ]]; then
             CERT_OUTPUT=$(sudo /usr/local/bin/kubeadm certs check-expiration 2>/dev/null | sed -n '/CERTIFICATE/,/^CERTIFICATE AUTHORITY/{//!p;}')
             if [[ ${VERBOSE} = 1 ]]; then
-                printf %s "${CERT_OUTPUT}"
+                printf '%s\n' "${CERT_OUTPUT}"
                 echo " " 
             fi
-            printf %s "${CERT_OUTPUT}" |
             while IFS= read -r LINE; do
                 if [[ ${LINE} =~ "MISSING" ]]; then # in some cases some certificates are !MISSING!
                     CERT_NAME=$(echo ${LINE} | sed 's/!MISSING! //g')
@@ -220,14 +219,13 @@ check_kubernetes_certs(){
                         EXPIRED_CERTS+=( ${CERT} )
                     fi    
                 fi
-            done
+            done <<< "${KUBE_OUTPUT_TURBO_FILTERED}"
         elif [[ $kubeVersion -ge 15 ]]; then
             CERT_OUTPUT=$(sudo /usr/local/bin/kubeadm alpha certs check-expiration 2>/dev/null | sed -n '/CERTIFICATE/,/^CERTIFICATE AUTHORITY/{//!p;}')
             if [[ ${VERBOSE} = 1 ]]; then
-                printf %s "${CERT_OUTPUT}"
+                printf '%s\n' "${CERT_OUTPUT}"
                 echo " " 
             fi
-            printf %s "${CERT_OUTPUT}" |
             while IFS= read -r LINE; do
                 if [[ ${LINE} =~ "MISSING" ]]; then # in some cases some certificates are !MISSING!
                     CERT_NAME=$(echo ${LINE} | sed 's/!MISSING! //g')
@@ -241,7 +239,7 @@ check_kubernetes_certs(){
                         EXPIRED_CERTS+=( ${CERT} )
                     fi
                 fi
-            done
+            done <<< "${CERT_OUTPUT}"
         elif [[ $kubeVersion -gt 0 && $kubeVersion -lt 15 ]]; then # For Kubernetes below version 15 - specific handling
             CERT_OUTPUT_VERBOSE=()
             for CERT in /etc/kubernetes/pki/*.crt
@@ -249,11 +247,11 @@ check_kubernetes_certs(){
                 if ! [[ ${CERT} =~ "ca.crt" ]]; then
                     CERT_OUTPUT=$(openssl x509 -noout -text -in ${CERT} 2>/dev/null | grep After | xargs)
                     if [[ ${VERBOSE} = 1 ]]; then
-                        printf %s "${CERT} - ${CERT_OUTPUT}"
+                        printf '%s\n' "${CERT} - ${CERT_OUTPUT}"
                         echo " "
                     fi
                     CERT_OUTPUT_VERBOSE+=( ${CERT_OUTPUT} )
-                    CERT_DATE=$(printf %s "${CERT_OUTPUT}" | grep After | cut -d ':' -f 2- | xargs) # from that we get the date in a proper format without trailing space
+                    CERT_DATE=$(printf '%s\n' "${CERT_OUTPUT}" | grep After | cut -d ':' -f 2- | xargs) # from that we get the date in a proper format without trailing space
                     # convert $CERT_DATE in epoch
                     CERT_EPOCH=$(date +%s -d "${CERT_DATE}")
                     NOW_EPOCH=$(date +%s)
@@ -368,11 +366,11 @@ check_time_and_date(){
     TIMEDATECTL_OUTPUT=$(timedatectl)
     # Is NTP enabled?
     if [[ ${VERBOSE} = 1 ]]; then
-        printf %s "${TIMEDATECTL_OUTPUT}"
+        printf '%s\n' "${TIMEDATECTL_OUTPUT}"
         echo " "
         echo "${WHITE}Checking if NTP is enabled for timesync..."
     fi
-    NTP_ENABLED=$(printf %s "${TIMEDATECTL_OUTPUT}" | grep "NTP enabled" | cut -d ':' -f 2 | xargs)
+    NTP_ENABLED=$(printf '%s\n' "${TIMEDATECTL_OUTPUT}" | grep "NTP enabled" | cut -d ':' -f 2 | xargs)
     if [[ ${NTP_ENABLED} != "yes" ]]; then
         if [[ ${VERBOSE} = 1 ]]; then
             echo "${RED}NTP is disabled."
@@ -387,7 +385,7 @@ check_time_and_date(){
     if [[ ${VERBOSE} = 1 ]]; then
         echo "${WHITE}Checking if NTP is synchronized for timesync..."
     fi
-    NTP_SYNC=$(printf %s "${TIMEDATECTL_OUTPUT}" | grep "NTP synchronized" | cut -d ':' -f 2 | xargs)
+    NTP_SYNC=$(printf '%s\n' "${TIMEDATECTL_OUTPUT}" | grep "NTP synchronized" | cut -d ':' -f 2 | xargs)
     if [[ ${NTP_SYNC} != "yes" ]]; then
         if [[ ${VERBOSE} = 1 ]]; then
             echo "${RED}NTP is not synchronized."
@@ -402,10 +400,10 @@ check_time_and_date(){
     CHRONYD_OUTPUT=$(sudo systemctl status chronyd 2>/dev/null)
     if [[ ${VERBOSE} = 1 ]]; then
         echo "${WHITE}Checking if Chronyd is running for NTP timesync..."
-        printf %s "${CHRONYD_OUTPUT}"
+        printf '%s\n' "${CHRONYD_OUTPUT}"
         echo " "
     fi
-    CHRONYD_RUN=$(printf %s "${CHRONYD_OUTPUT}" | grep Active | grep running)
+    CHRONYD_RUN=$(printf '%s\n' "${CHRONYD_OUTPUT}" | grep Active | grep running)
     if [[ -z ${CHRONYD_RUN} ]]; then
         if [[ ${VERBOSE} = 1 ]]; then
             echo "${RED}Chronyd is not running."
@@ -443,11 +441,11 @@ check_turbonomic_pods(){
     if [ -f "/opt/turbonomic/kubernetes/yaml/persistent-volumes/local-storage-pv.yaml" ]; then
         # Gluster is disabled
         KUBE_OUTPUT=$(kubectl get pods -n turbonomic | grep -v "NAME")
-        KUBE_OUTPUT_FILTERED=$(kubectl get pods -n turbonomic | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME")
+        KUBE_OUTPUT_FILTERED=$(kubectl get pods -n turbonomic | grep -Pv '\s+([1-9]+)\/\1\s+Running' | grep -v "NAME")
         if [[ ${KUBECTL_TEST} -eq 0 ]]; then # only if the kubectl command worked
             if [[ -z ${KUBE_OUTPUT_FILTERED} ]]; then
                 if [[ ${VERBOSE} = 1 ]]; then
-                    printf %s "${KUBE_OUTPUT}"
+                    printf '%s\n' "${KUBE_OUTPUT}"
                     echo " "
                     echo "${GREEN}All pods are running as expected."
                 fi
@@ -455,18 +453,14 @@ check_turbonomic_pods(){
                 SUMMARY+=( "${WHITE}Turbonomic pods checks | ${GREEN}PASSED" )
             else
                 # Get the list of non correctly running pods
-                printf %s "${KUBE_OUTPUT_FILTERED}" |
                 while IFS= read -r LINE; do
                     POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
                     FAILING_PODS+=( ${POD_NAME} )
-                done
+                done <<< "${KUBE_OUTPUT_FILTERED}"
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${RED}Some pods are not running as expected."
                     echo "${WHITE}List of pods not running as expected:"
-                    for POD in "${FAILING_PODS[@]}"
-                    do
-                        echo "${RED}${POD}"
-                    done
+                    printf '%s\n' "${FAILING_PODS[@]}"
                 fi
                 echo "${RED}Turbonomic pods checks FAILED"
                 SUMMARY+=( "${WHITE}Turbonomic pods checks | ${RED}FAILED" )
@@ -481,15 +475,15 @@ check_turbonomic_pods(){
     else
         # Gluster is enabled
         KUBE_OUTPUT_TURBO=$(kubectl get pods -n turbonomic | grep -v "NAME")
-        KUBE_OUTPUT_TURBO_FILTERED=$(kubectl get pods -n turbonomic | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME")
+        KUBE_OUTPUT_TURBO_FILTERED=$(kubectl get pods -n turbonomic | grep -Pv '\s+([1-9]+)\/\1\s+Running' | grep -v "NAME")
         if [[ ${KUBECTL_TEST} -eq 0 ]]; then # only if the kubectl command worked
             KUBE_OUTPUT_DEFAULT=$(kubectl get pods -n default | grep -v "NAME")
-            KUBE_OUTPUT_DEFAULT_FILTERED=$(kubectl get pods -n default | grep -Pv '\s+([1-9]+)\/\1\s+' | grep -v "NAME")
+            KUBE_OUTPUT_DEFAULT_FILTERED=$(kubectl get pods -n default | grep -Pv '\s+([1-9]+)\/\1\s+Running' | grep -v "NAME")
             if [[ -z ${KUBE_OUTPUT_TURBO_FILTERED} && -z ${KUBE_OUTPUT_DEFAULT_FILTERED} ]]; then
                 if [[ ${VERBOSE} = 1 ]]; then
-                    printf %s "${KUBE_OUTPUT_TURBO}"
+                    printf '%s\n' "${KUBE_OUTPUT_TURBO}"
                     echo " "
-                    printf %s "${KUBE_OUTPUT_DEFAULT}"
+                    printf '%s\n' "${KUBE_OUTPUT_DEFAULT}"
                     echo " "
                     echo "${GREEN}All pods are running as expected."
                 fi
@@ -497,16 +491,14 @@ check_turbonomic_pods(){
                 SUMMARY+=( "${WHITE}Turbonomic pods checks | ${GREEN}PASSED" )
             else
                 # Get the list of non correctly running pods
-                printf %s "${KUBE_OUTPUT_TURBO_FILTERED}" |
                 while IFS= read -r LINE; do
                     POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
                     FAILING_PODS+=( ${POD_NAME} )
-                done
-                printf %s "${KUBE_OUTPUT_DEFAULT_FILTERED}" |
+                done <<< "${KUBE_OUTPUT_TURBO_FILTERED}"
                 while IFS= read -r LINE; do
                     POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
                     FAILING_PODS+=( ${POD_NAME} )
-                done
+                done <<< "${KUBE_OUTPUT_DEFAULT_FILTERED}"
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${RED}Some pods are not running as expected."
                     echo "${WHITE}List of pods not running as expected:"

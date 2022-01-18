@@ -1,5 +1,5 @@
 #!/bin/bash
-#Upgrade pre-check script - January 13, 2022
+#Upgrade pre-check script - January 18, 2022
 #Author: CS/JS
 echo " "
 RED=`tput setaf 1`
@@ -21,7 +21,7 @@ trap 'tput sgr0' EXIT
 usage () {
    echo ""
    echo "Upgrade Precheck Script"
-   echo "v2.16"
+   echo "v2.17"
    echo ""
    echo "Usage:"
    echo ""
@@ -98,7 +98,7 @@ check_internet(){
     else
         for URL in "${URL_LIST[@]}"
         do
-            if [[ $(curl ${URL} --max-time 10 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then
+            if [[ $(curl ${URL} --max-time ${MAX_TIME} -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then
                 if [[ ${VERBOSE} = 1 || ${ECC} = 1 ]]; then
                     echo "${GREEN}Successfully reached ${URL}"
                 fi

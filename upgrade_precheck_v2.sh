@@ -9,6 +9,7 @@ BLUE=`tput setaf 4`
 YELLOW=`tput setaf 3`
 NC=`tput sgr0` # No Color
 
+MAX_TIME=10
 VERBOSE=0
 ECC=0 # Endpoints connectivity checks details
 SUMMARY_TABLE=0 # Summary table status
@@ -18,15 +19,18 @@ SUMMARY=() # Summary table
 trap 'tput sgr0' EXIT
 
 usage () {
-   echo "v2.15"
+   echo ""
+   echo "Upgrade Precheck Script"
+   echo "v2.16"
    echo ""
    echo "Usage:"
    echo ""
-   echo "   upgrade-precheck.sh [-v] [-c] [-s] [-h]"
+   echo "   upgrade-precheck.sh [-v] [-c] [-t <time_in_seconds>] [-s] [-h]"
    echo ""
    echo "   Arguments list"
    echo "      -v: turn on verbose mode"
    echo "      -c: show details on endpoints connectivity checks"
+   echo "      -t <time_in_seconds>: change timeout for endpoints connectivity checks to <time_in_seconds> seconds (default is 10 seconds)"
    echo "      -s: display a summary table at the end of all checks"
    echo "      -h: this help"
    echo ""
@@ -79,7 +83,7 @@ check_internet(){
         echo "${WHITE}Checking endpoints connectivity for ONLINE upgrade ONLY using proxy provided..."
         for URL in "${URL_LIST[@]}"
         do
-            if [[ $(curl --proxy $P_NAME_PORT ${URL} --max-time 10 -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then
+            if [[ $(curl --proxy $P_NAME_PORT ${URL} --max-time ${MAX_TIME} -s -o /dev/null -w "%{http_code}") != @(000|407|502) ]]; then
                 if [[ ${VERBOSE} = 1 || ${ECC} = 1 ]]; then
                     echo "${GREEN}Successfully reached ${URL}"
                 fi
@@ -527,7 +531,7 @@ check_turbonomic_pods(){
 
 # Main script
 # Check for arguments
-while getopts "vcsh" ARGUMENTS
+while getopts "vct:sh" ARGUMENTS
 do
    case ${ARGUMENTS} in
       v)
@@ -540,12 +544,24 @@ do
          echo " "
          ECC=1
          ;;
+      t)
+         if [[ -z ${OPTARG} ]]; then
+            echo "-t argument requires a value"
+         elif ! [[ ${OPTARG} =~ ^[0-9]+$ ]]; then
+            echo "-t argument requires a integer value"
+            usage
+         else
+            MAX_TIME=${OPTARG}
+            echo "${WHITE}Changing endpoints connectivity checks timeout to ${OPTARG} seconds"
+            echo " "
+         fi
+         ;;
       s)
          echo "${WHITE}Summary table ON"
          echo " "
          SUMMARY_TABLE=1
          ;;
-      h)
+      h|?)
          usage
          ;;
    esac

@@ -456,7 +456,7 @@ check_turbonomic_pods(){
                 while IFS= read -r LINE; do
                     #POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
                     POD_RECORD=$(echo ${LINE})
-                    FAILING_PODS+=( ${POD_RECORD} )
+                    FAILING_PODS+=( "${POD_RECORD}" )
                 done <<< "${KUBE_OUTPUT_FILTERED}"
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${RED}Some pods are not running as expected."
@@ -495,12 +495,12 @@ check_turbonomic_pods(){
                 while IFS= read -r LINE; do
                     #POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
                     POD_RECORD=$(echo ${LINE})
-                    FAILING_PODS+=( ${POD_RECORD} )
+                    FAILING_PODS+=( "${POD_RECORD}" )
                 done <<< "${KUBE_OUTPUT_TURBO_FILTERED}"
                 while IFS= read -r LINE; do
                     #POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
                     POD_RECORD=$(echo ${LINE})
-                    FAILING_PODS+=( ${POD_RECORD} )
+                    FAILING_PODS+=( "${POD_RECORD}" )
                 done <<< "${KUBE_OUTPUT_DEFAULT_FILTERED}"
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${RED}Some pods are not running as expected."

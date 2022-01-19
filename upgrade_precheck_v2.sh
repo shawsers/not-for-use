@@ -21,7 +21,7 @@ trap 'tput sgr0' EXIT
 usage () {
    echo ""
    echo "Upgrade Precheck Script"
-   echo "v2.20"
+   echo "v2.21"
    echo ""
    echo "Usage:"
    echo ""
@@ -454,8 +454,9 @@ check_turbonomic_pods(){
             else
                 # Get the list of non correctly running pods
                 while IFS= read -r LINE; do
-                    POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
-                    FAILING_PODS+=( ${POD_NAME} )
+                    #POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
+                    POD_RECORD=$(echo ${LINE})
+                    FAILING_PODS+=( ${POD_RECORD} )
                 done <<< "${KUBE_OUTPUT_FILTERED}"
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${RED}Some pods are not running as expected."
@@ -492,12 +493,14 @@ check_turbonomic_pods(){
             else
                 # Get the list of non correctly running pods
                 while IFS= read -r LINE; do
-                    POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
-                    FAILING_PODS+=( ${POD_NAME} )
+                    #POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
+                    POD_RECORD=$(echo ${LINE})
+                    FAILING_PODS+=( ${POD_RECORD} )
                 done <<< "${KUBE_OUTPUT_TURBO_FILTERED}"
                 while IFS= read -r LINE; do
-                    POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
-                    FAILING_PODS+=( ${POD_NAME} )
+                    #POD_NAME=$(echo ${LINE} | cut -d ' ' -f 1)
+                    POD_RECORD=$(echo ${LINE})
+                    FAILING_PODS+=( ${POD_RECORD} )
                 done <<< "${KUBE_OUTPUT_DEFAULT_FILTERED}"
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${RED}Some pods are not running as expected."

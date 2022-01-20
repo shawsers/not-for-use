@@ -21,7 +21,7 @@ trap 'tput sgr0' EXIT
 usage () {
    echo ""
    echo "Upgrade Precheck Script"
-   echo "v2.21"
+   echo "v2.22"
    echo ""
    echo "Usage:"
    echo ""
@@ -197,9 +197,14 @@ check_kubernetes_certs(){
     echo "Checking for expired Kubernetes certificates..."
     echo "Checking all certs now..."
     ERRORS=()
-    EXPIRED_CERTS=() 
+    EXPIRED_CERTS=()
+    # Execute the command to check if kubectl is working
+    /usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g' > /dev/null
+    # Grab return code
+    KUBECTL_RC=${PIPESTATUS[0]}
+    if [[ ${KUBECTL_RC} -eq 0 ]]; then # only if the kubectl command worked
+    # As the command works, let's get the version
     kubeVersion=$(/usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
-    if [[ ${PIPESTATUS[0]} -eq 0 ]]; then # only if the kubectl command worked
         if [[ $kubeVersion -ge 20 ]]; then
             CERT_OUTPUT=$(sudo /usr/local/bin/kubeadm certs check-expiration 2>/dev/null | sed -n '/CERTIFICATE/,/^CERTIFICATE AUTHORITY/{//!p;}')
             if [[ ${VERBOSE} = 1 ]]; then

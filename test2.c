@@ -23,7 +23,7 @@ int main(void) {
     float nst = (float)ns /100;
     
     //tax rounding
-    float taxt = subt * TAX * 100; //changes number to 1867.8398
+    float taxt = nst * TAX * 100; //changes number to 1867.8398
     int newtaxt = taxt + .5; //Rounds above number to 1868
     float ntaxt = (float)newtaxt / 100; //changes number to 18.68    
     

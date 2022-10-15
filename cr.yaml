@@ -1,0 +1,32 @@
+apiVersion: charts.helm.k8s.io/v1
+kind: Xl
+metadata:
+  name: xl-release
+  namespace: turbonomic
+spec:
+  global:
+    registry: index.docker.io/turbonomic
+    tag: 8.6.2
+    #storageClassName: oci-bv-ext3
+    ingress:
+      annotations:
+        service.beta.kubernetes.io/oci-load-balancer-internal: 'true'
+        service.beta.kubernetes.io/oci-load-balancer-shape: flexible
+        service.beta.kubernetes.io/oci-load-balancer-shape-flex-max: '400'
+        service.beta.kubernetes.io/oci-load-balancer-shape-flex-min: '100'
+  actionscript:
+    enabled: true
+  aws:
+    enabled: true
+  dynatrace:
+    enabled: false
+  azure:
+    enabled: true
+  gcp:
+    enabled: true
+  servicenow:
+    enabled: true
+  vcenter:
+    enabled: true
+  snmp:
+    enabled: true

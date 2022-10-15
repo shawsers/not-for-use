@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!-- Turbobomic license file; license created: 2022-02-11 -->
+<license>
+      <first-name>Gilad</first-name>
+      <last-name>Lazarovich</last-name>
+      <email>gilad.lazarovich@turbonomic.com</email>
+      <vm-total>201102</vm-total>
+      <edition>Premier</edition>
+      <expiration-date>2023-02-11</expiration-date>
+      <lock-code>c8d076ceb9094288aa0acd9022e0a147</lock-code>
+      <feature FeatureName="API2" />
+      <feature FeatureName="SLA" />
+      <feature FeatureName="action_script" />
+      <feature FeatureName="active_directory" />
+      <feature FeatureName="aggregation" />
+      <feature FeatureName="app_control" />
+      <feature FeatureName="applications" />
+      <feature FeatureName="automated_actions" />
+      <feature FeatureName="cloud_cost" />
+      <feature FeatureName="cloud_targets" />
+      <feature FeatureName="cluster_flattening" />
+      <feature FeatureName="container_control" />
+      <feature FeatureName="custom_policies" />
+      <feature FeatureName="custom_reports" />
+      <feature FeatureName="customized_views" />
+      <feature FeatureName="deploy" />
+      <feature FeatureName="fabric" />
+      <feature FeatureName="full_policy" />
+      <feature FeatureName="group_editor" />
+      <feature FeatureName="historical_data" />
+      <feature FeatureName="loadbalancer" />
+      <feature FeatureName="multiple_vc" />
+      <feature FeatureName="network_control" />
+      <feature FeatureName="optimizer" />
+      <feature FeatureName="planner" />
+      <feature FeatureName="public_cloud" />
+      <feature FeatureName="scaling" />
+      <feature FeatureName="scoped_user_view" />
+      <feature FeatureName="storage" />
+      <feature FeatureName="vdi_control" />
+      <feature FeatureName="vmturbo_api" />
+</license>

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edu-actionscripts
+  namespace: turbointegrations
+  labels:
+    environment: dev
+    team: turbointegrations
+    app: edu-actionscripts
+    version: "0.2.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: edu-actionscripts
+  template:
+    metadata:
+      labels:
+        environment: dev
+        team: turbointegrations
+        app: edu-actionscripts
+        version: "0.2.0"
+    spec:
+    # Comment the following line out if not using OpenShift
+      serviceAccountName: "turbointegrations"
+      containers:
+      - name: edu-actionscripts
+        image: docker.io/turbointegrations/edu-action-scripts:0.2.0
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          runAsUser: 101
+        ports:
+        - name: sshd
+          containerPort: 2022
+        volumeMounts:
+        - mountPath: /sshkeys
+          name: sshkeys
+      volumes:
+      - name: sshkeys
+        secret:
+          secretName: edu-action-script-keys
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: edu-actionscripts
+  namespace: turbointegrations
+  labels:
+    environment: dev
+    team: turbointegrations
+    app: edu-actionscripts
+    version: "0.2.0"
+spec:
+  ports:
+  - name: sshd
+    port: 2022
+    protocol: TCP
+  selector:
+    app: edu-actionscripts

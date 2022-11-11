@@ -1,0 +1,11 @@
+  timescaledb:
+    enabled: true
+  postgresql:
+    persistence:
+      size: 500Gi
+    securityContext:
+      runAsUser: 1000760000
+    volumePermissions:
+      enabled: true
+      securityContext:
+        runAsUser: 1000760000

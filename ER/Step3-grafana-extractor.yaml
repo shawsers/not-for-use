@@ -1,0 +1,14 @@
+  properties:
+    extractor:
+      grafanaAdminPassword: vmturbo
+  grafana:
+    adminPassword: vmturbo
+    enabled: true
+    grafana.ini:
+      database:
+        password: vmturbo
+        type: postgres
+  extractor:
+    enabled: true
+  reporting:
+    enabled: true

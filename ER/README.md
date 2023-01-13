@@ -1,5 +1,5 @@
 #### Step 1
-- Connect to your OpenShift Cluster via command line (copy login command and paste the token).  Once connected to your cluster run oc adm command replacing "YOUR_PROJECT_HERE" with the project/namespace that you deployed Turbo into.  [Step 1 file is here - use the "copy raw contents" button on the top right of the file to copy the contents](https://github.com/shawsers/random/blob/main/ER/Step1-oc-adm.yaml)
+- Connect to your OpenShift Cluster via command line (copy login command and paste the token).  Once connected to your cluster run oc adm command replacing "YOUR_PROJECT_HERE" with the project/namespace that you deployed Turbo into.
 ```
 oc adm policy add-scc-to-group anyuid system:serviceaccounts:YOUR_PROJECT_HERE
 ```

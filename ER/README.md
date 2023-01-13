@@ -24,7 +24,23 @@ oc adm policy add-scc-to-group anyuid system:serviceaccounts:YOUR_PROJECT_HERE
 - wait until the timescaledb pod shows Ready 1/1 before proceeding to the next stop.  This is important to wait, otherwise reporting might not enable correctly
 
 #### Step 4
-- update your xl-release yaml again with the content in the 3rd yaml file.  Note that the properties, grafana, extractor and reporting lines should all align with the probes you have added in your yaml.  [Step 3 file is here - use the "copy raw contents" button on the top right of the file to copy the contents](https://github.com/shawsers/random/blob/main/ER/Step3-grafana-extractor.yaml)
+- update your xl-release yaml again with the script contents below.  Note that the properties, grafana, extractor and reporting lines should all align with the probes you have added in your yaml.
+```
+  properties:
+    extractor:
+      grafanaAdminPassword: vmturbo
+  grafana:
+    adminPassword: vmturbo
+    enabled: true
+    grafana.ini:
+      database:
+        password: vmturbo
+        type: postgres
+  extractor:
+    enabled: true
+  reporting:
+    enabled: true
+```
 
 #### Step 5
 - wait until the grafana and extractor pods to show as Ready 1/1 before proceeding.
@@ -33,4 +49,4 @@ oc adm policy add-scc-to-group anyuid system:serviceaccounts:YOUR_PROJECT_HERE
 - delete the api pod and wait for it to become Ready 1/1
 
 #### Step 7
-- now login to your Turbo UI and you should see the Report option on the left menu now.
+- now login to your Turbo UI and you should see the REPORT option on the left menu now, which you can click to view Embedded Reports.

@@ -5,7 +5,20 @@ oc adm policy add-scc-to-group anyuid system:serviceaccounts:YOUR_PROJECT_HERE
 ```
 
 #### Step 2
-- update your xl-release yaml with the content in the 2nd yaml file.  Make sure to update lines 7 and 11 by replacing the number 1000760000 in the file with your fsGroup value in your yaml.  Note that the line 1 and line 3 should align with the probes you have added in your yaml.  [Step 2 file is here - use the "copy raw contents" button on the top right of the file to copy the contents](https://github.com/shawsers/random/blob/main/ER/Step2-timescaledb.yaml)
+- update your xl-release yaml with the content in the 2nd yaml file.  Make sure to update lines 7 and 11 by replacing the number 1000760000 in the file with your fsGroup value in your yaml.  Note that the line 1 and line 3 should align with the probes you have added in your yaml.
+```
+  timescaledb:
+    enabled: true
+  postgresql:
+    persistence:
+      size: 500Gi
+    securityContext:
+      runAsUser: 1000##0000
+    volumePermissions:
+      enabled: true
+      securityContext:
+        runAsUser: 1000##0000
+```
 
 #### Step 3
 - wait until the timescaledb pod shows Ready 1/1 before proceeding.

@@ -1,5 +1,5 @@
 ## Instructions on how to correctly copy the code examples below
-- Use the copy button to the right of the code you need to copy to have it automatically copy the code to your clipboard, which you can then paste as needed.  See example screen shot below of how to use the copy button
+- Use the copy button to the right of the code you need to copy to have it automatically copy the code to your clipboard, which you can then paste as needed.  See example screen shot below of how to use the copy button, which only appears when you hover your mouse over the code.
 <img width="1033" alt="Screenshot 2023-01-13 at 10 45 31 AM" src="https://user-images.githubusercontent.com/53303655/212361132-5cc283af-adc2-4d6e-aac0-c8513ae5b9c6.png">
 
 #### Step 1

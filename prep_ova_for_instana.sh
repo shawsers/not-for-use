@@ -36,4 +36,5 @@ yum clean expire-cache -y
 yum makecache -y
 yum install -y instana-console
 echo "**check for errors above and correct/rerun as needed**"
+echo "**update /etc/hosts with correct IP for the host**"
 echo "Instana install prep done, proceed with instana init"

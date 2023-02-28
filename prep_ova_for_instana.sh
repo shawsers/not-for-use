@@ -1,5 +1,3 @@
-echo "change root password"
-sudo su -
 echo "remove MariaDB"
 yum -y remove mariadb mariadb-server
 echo "unmount MariaDB volume"

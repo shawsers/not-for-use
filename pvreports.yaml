@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvreports
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 250Gi
+  nfs:
+    path: /export/pvreports
+    server: 10.100.1.5
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: managed-nfs-storage
+  volumeMode: Filesystem

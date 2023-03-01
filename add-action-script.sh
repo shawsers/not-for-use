@@ -93,12 +93,12 @@ function main() {
     local login="https://${TURBOADDR}/vmturbo/rest/login"
     echo Login response:
     curl -s -k -K POST -d "username=${TURBOUSER}&password=${TURBOPASS}" -c $cookies $login \
-    	 | python -m json.tool
+    	 | python3 -m json.tool
     local url="https://$TURBOADDR/vmturbo/rest/targets"
     local payload="$(getRequest "$pkey")"
     echo Target creation response:
     curl -s -k -K POST -d "$payload" -H 'Content-Type: application/json' -b $cookies "$url" \
-	| python -m json.tool
+	| python3 -m json.tool
     rm -rf $cookies
 }
 

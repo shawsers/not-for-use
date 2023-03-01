@@ -1,0 +1,28 @@
+{
+            "scripts": [
+                {
+                    "name": "MyVmMovePreLog",
+                    "description": "Log everything before a VM Move",
+                    "scriptPath": "/home/ptuser/action-script/pre.sh",
+                    "entityType": "VIRTUAL_MACHINE",
+                    "actionType": "MOVE",
+                    "actionPhase": "PRE"
+                },
+                {
+                        "name": "MyVmMoveInsteadLog",
+                        "description": "Log everything instead of a VM Move",
+                        "scriptPath": "/home/ptuser/action-script/replace.sh",
+                        "entityType": "VIRTUAL_MACHINE",
+                        "actionType": "MOVE",
+                        "actionPhase": "REPLACE"
+                },
+                {
+                        "name": "MyVmMoveAfterLog",
+                        "description": "Log everything after a VM Move",
+                        "scriptPath": "/home/ptuser/action-script/post.sh",
+                        "entityType": "VIRTUAL_MACHINE",
+                        "actionType": "MOVE",
+                        "actionPhase": "POST"
+                }
+            ]
+        }

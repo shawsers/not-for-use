@@ -41,6 +41,7 @@ sslverify=1
 EOF
 yum clean expire-cache -y
 yum makecache -y
+echo "installing latest version of instana command line"
 yum install -y instana-console
 echo "1**check for errors above and correct/rerun as needed**"
 echo "2**update /etc/hosts with correct IP for the host**"

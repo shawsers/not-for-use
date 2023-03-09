@@ -22,4 +22,3 @@ spec:
     #externalIP: 10.0.2.15
     #externalDbIP: 10.0.2.15
     #externalTimescaleDBIP: 10.0.2.15
-    enableExternalSecrets: true

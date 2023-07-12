@@ -9,6 +9,14 @@ BLUE=`tput setaf 4`
 YELLOW=`tput setaf 3`
 NC=`tput sgr0` # No Color
 
+DFAIL=0
+EFAIL=0
+MFAIL=0
+KFAIL=0
+CFAIL=0
+RFAIL=0
+TFAIL=0
+PFAIL=0
 FAILED=0
 MAX_TIME=10
 VERBOSE=0
@@ -76,6 +84,7 @@ check_space(){
         fi
         echo "${RED}Disk space checks FAILED"
         let "FAILED=FAILED+1"
+        DFAIL=1
         SUMMARY+=( "${WHITE}Disk space check | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
@@ -129,6 +138,7 @@ check_internet(){
     else
         echo "${RED}Endpoints connectivity checks FAILED"
         let "FAILED=FAILED+1"
+        EFAIL=1
         SUMMARY+=( "${WHITE}Endpoints connectivity checks | ${RED}FAILED" )
         if [[ ${VERBOSE} = 1 || ${ECC} = 1 ]]; then
             echo "${WHITE}List of failing endpoints:"
@@ -164,6 +174,7 @@ check_database(){
                     fi
                     echo "${RED}MariaDB version check FAILED"
                     let "FAILED=FAILED+1"
+                    MFAIL=1
                     SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )
                 fi
                 ;;
@@ -180,6 +191,7 @@ check_database(){
                 fi
                 echo "${RED}MariaDB service check FAILED"
                 let "FAILED=FAILED+1"
+                MFAIL=1
                 SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )
                 ;;
     esac
@@ -202,6 +214,7 @@ check_kubernetes_service(){
         fi
         echo "${RED}Kubernetes service checks FAILED"
         let "FAILED=FAILED+1"
+        KFAIL=1
         SUMMARY+=( "${WHITE}Kubernetes service checks | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
@@ -296,6 +309,7 @@ check_kubernetes_certs(){
     else
         echo "${RED}Certificate checks FAILED"
         let "FAILED=FAILED+1"
+        CFAIL=1
         SUMMARY+=( "${WHITE}Certificate checks | ${RED}FAILED" )
         if [[ ${VERBOSE} = 1 ]]; then
             if [[ ${#EXPIRED_CERTS[@]} != 0 ]]; then # in that case kubectl command worked but certificates are expired
@@ -378,6 +392,7 @@ check_root_password(){
     else
         echo "${RED}Root account checks FAILED"
         let "FAILED=FAILED+1"
+        RFAIL=1
         SUMMARY+=( "${WHITE}Root account checks | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
@@ -452,6 +467,7 @@ check_time_and_date(){
     else
         echo "${RED}Time and date settings checks FAILED"
         let "FAILED=FAILED+1"
+        TFAIL=1
         SUMMARY+=( "${WHITE}Time and date settings checks | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
@@ -490,6 +506,7 @@ check_turbonomic_pods(){
                 fi
                 echo "${RED}IBM Turbonomic pods checks FAILED"
                 let "FAILED=FAILED+1"
+                PFAIL=1
                 SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
             fi
         else # kubectl command failed - cluster is messed up?
@@ -498,6 +515,7 @@ check_turbonomic_pods(){
             fi
             echo "${RED}IBM Turbonomic pods checks FAILED"
             let "FAILED=FAILED+1"
+            PFAIL=1
             SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
         fi
     else
@@ -539,6 +557,7 @@ check_turbonomic_pods(){
                 fi
                 echo "${RED}IBM Turbonomic pods checks FAILED"
                 let "FAILED=FAILED+1"
+                PFAIL=1
                 SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
             fi
         else # kubectl command failed - cluster is messed up?
@@ -547,6 +566,7 @@ check_turbonomic_pods(){
             fi
             echo "${RED}IBM Turbonomic pods checks FAILED"
             let "FAILED=FAILED+1"
+            PFAIL=1
             SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
         fi
     fi

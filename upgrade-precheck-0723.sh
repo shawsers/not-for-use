@@ -9,6 +9,7 @@ BLUE=`tput setaf 4`
 YELLOW=`tput setaf 3`
 NC=`tput sgr0` # No Color
 
+FAILED=0
 MAX_TIME=10
 VERBOSE=0
 ECC=0 # Endpoints connectivity checks details
@@ -21,7 +22,7 @@ trap 'tput sgr0' EXIT
 usage () {
    echo ""
    echo "Upgrade Precheck Script"
-   echo "v2.34"
+   echo "v2.35"
    echo ""
    echo "Usage:"
    echo ""
@@ -74,6 +75,7 @@ check_space(){
             fi
         fi
         echo "${RED}Disk space checks FAILED"
+        let "FAILED=FAILED+1"
         SUMMARY+=( "${WHITE}Disk space check | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
@@ -126,6 +128,7 @@ check_internet(){
         SUMMARY+=( "${WHITE}Endpoints connectivity checks | ${GREEN}PASSED" )
     else
         echo "${RED}Endpoints connectivity checks FAILED"
+        let "FAILED=FAILED+1"
         SUMMARY+=( "${WHITE}Endpoints connectivity checks | ${RED}FAILED" )
         if [[ ${VERBOSE} = 1 || ${ECC} = 1 ]]; then
             echo "${WHITE}List of failing endpoints:"
@@ -160,6 +163,7 @@ check_database(){
                         echo "${RED}The version of MariaDB is below version 10.5.20 you will also need to upgrade it post IBM Turbonomic upgrade following the steps in the install guide."
                     fi
                     echo "${RED}MariaDB version check FAILED"
+                    let "FAILED=FAILED+1"
                     SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )
                 fi
                 ;;
@@ -175,6 +179,7 @@ check_database(){
                     echo "${RED}MariaDB service is not running....please resolve before upgrading."
                 fi
                 echo "${RED}MariaDB service check FAILED"
+                let "FAILED=FAILED+1"
                 SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )
                 ;;
     esac
@@ -196,6 +201,7 @@ check_kubernetes_service(){
             echo "${RED}Kubernetes service is not running. Please resolve before upgrading."
         fi
         echo "${RED}Kubernetes service checks FAILED"
+        let "FAILED=FAILED+1"
         SUMMARY+=( "${WHITE}Kubernetes service checks | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
@@ -289,6 +295,7 @@ check_kubernetes_certs(){
         SUMMARY+=( "${WHITE}Certificate checks | ${GREEN}PASSED" )
     else
         echo "${RED}Certificate checks FAILED"
+        let "FAILED=FAILED+1"
         SUMMARY+=( "${WHITE}Certificate checks | ${RED}FAILED" )
         if [[ ${VERBOSE} = 1 ]]; then
             if [[ ${#EXPIRED_CERTS[@]} != 0 ]]; then # in that case kubectl command worked but certificates are expired
@@ -370,6 +377,7 @@ check_root_password(){
         SUMMARY+=( "${WHITE}Root account checks | ${GREEN}PASSED" )
     else
         echo "${RED}Root account checks FAILED"
+        let "FAILED=FAILED+1"
         SUMMARY+=( "${WHITE}Root account checks | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
@@ -443,6 +451,7 @@ check_time_and_date(){
         SUMMARY+=( "${WHITE}Time and date settings checks | ${GREEN}PASSED" )
     else
         echo "${RED}Time and date settings checks FAILED"
+        let "FAILED=FAILED+1"
         SUMMARY+=( "${WHITE}Time and date settings checks | ${RED}FAILED" )
     fi
     echo "${WHITE}****************************"
@@ -480,6 +489,7 @@ check_turbonomic_pods(){
                     printf '%s\n' "${FAILING_PODS[@]}"
                 fi
                 echo "${RED}IBM Turbonomic pods checks FAILED"
+                let "FAILED=FAILED+1"
                 SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
             fi
         else # kubectl command failed - cluster is messed up?
@@ -487,6 +497,7 @@ check_turbonomic_pods(){
                 echo "${RED}Kubectl command is failing. Please check the status of your Kubernetes cluster."
             fi
             echo "${RED}IBM Turbonomic pods checks FAILED"
+            let "FAILED=FAILED+1"
             SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
         fi
     else
@@ -527,6 +538,7 @@ check_turbonomic_pods(){
                     done
                 fi
                 echo "${RED}IBM Turbonomic pods checks FAILED"
+                let "FAILED=FAILED+1"
                 SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
             fi
         else # kubectl command failed - cluster is messed up?
@@ -534,6 +546,7 @@ check_turbonomic_pods(){
                 echo "${RED}Kubectl command is failing. Please check the status of your Kubernetes cluster."
             fi
             echo "${RED}IBM Turbonomic pods checks FAILED"
+            let "FAILED=FAILED+1"
             SUMMARY+=( "${WHITE}IBM Turbonomic pods checks | ${RED}FAILED" )
         fi
     fi
@@ -611,10 +624,13 @@ if [[ ${SUMMARY_TABLE} = 1 ]]; then
     printf "%s\n" "${WHITE}-------------------------------------------"
 fi
 echo " "
-if [[ ${VERBOSE} = 1 ]]; then
-    echo "${WHITE}Please review and resolve any ${RED}FAILED ${WHITE}issues above before proceeding with the upgrade, if you cannot resolve **please contact IBM Turbonomic support**"
+if [[ ${FAILED} = 0 ]]; then
+   echo "${WHITE}All tests ${GREEN}PASSED ${WHITE} you can proceed with upgrade!"
 else
-    echo "${WHITE}Please review and resolve any ${RED}FAILED ${WHITE}issues above before proceeding with the upgrade, if you need more details of any failed items re-run the script with the -v switch, if you cannot resolve **please contact IBM Turbonomic support**"
+   echo "${RED}**${WHITE}You have ${RED} ${FAILED} FAILED checks${WHITE} that need to be resolved before upgrading, if you cannot resolve **please contact IBM Turbonomic support${RED}**"
+fi
+if [[ ${VERBOSE} = 0 ]]; then
+    echo "${WHITE}If you need more details for any of the checks, re-run the script with the -v switch for verbose mode"
 fi
 echo " "
 echo "End of Upgrade Pre-Check"

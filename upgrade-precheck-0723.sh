@@ -29,7 +29,7 @@ trap 'tput sgr0' EXIT
 
 usage () {
    echo ""
-   echo "--Upgrade Precheck Script--"
+   echo "Upgrade Precheck Script"
    echo "v2.35"
    echo ""
    echo "Usage:"
@@ -610,7 +610,7 @@ do
          ;;
    esac
 done
-echo "Starting Upgrade Pre-check..."
+echo "--Starting Upgrade Pre-check..."
 echo " "
 check_space
 echo " "

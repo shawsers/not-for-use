@@ -633,4 +633,4 @@ if [[ ${VERBOSE} = 0 ]]; then
     echo "${WHITE}If you need more details for any of the checks, re-run the script with the -v switch for verbose mode"
 fi
 echo " "
-echo "End of Upgrade Pre-Check"
+echo "${WHITE}End of Upgrade Pre-Check"

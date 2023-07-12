@@ -29,7 +29,7 @@ trap 'tput sgr0' EXIT
 
 usage () {
    echo ""
-   echo "Upgrade Precheck Script"
+   echo "--Upgrade Precheck Script--"
    echo "v2.35"
    echo ""
    echo "Usage:"
@@ -679,4 +679,4 @@ if [[ ${VERBOSE} = 0 ]]; then
     echo "${WHITE}If you need more details for any of the checks, re-run the script with the -v switch for verbose mode"
 fi
 echo " "
-echo "${WHITE}End of Upgrade Pre-Check"
+echo "${WHITE}--End of Upgrade Pre-Check--"

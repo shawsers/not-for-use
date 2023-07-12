@@ -648,6 +648,31 @@ if [[ ${FAILED} = 0 ]]; then
    echo "${WHITE}All tests ${GREEN}PASSED${WHITE} you can proceed with upgrade!"
 else
    echo "${RED}**${WHITE}You have ${RED}${FAILED} FAILED check(s) above${WHITE} that need to be resolved before upgrading, if you cannot resolve **please contact IBM Turbonomic support${RED}**"
+   echo "${RED}List of FAILED items:"
+   if [[ ${DFAIL} = 1 ]]; then
+      echo "${RED}Disk space check failed"
+   fi
+   if [[ ${EFAIL} = 1 ]]; then
+      echo "${RED}Endpoint check failed"
+   fi
+   if [[ ${MFAIL} = 1 ]]; then
+      echo "${RED}MariaDB check failed"
+   fi
+   if [[ ${KFAIL} = 1 ]]; then
+      echo "${RED}Kubernetes (kubelet) service check failed"
+   fi
+   if [[ ${CFAIL} = 1 ]]; then
+      echo "${RED}Certificate check failed"
+   fi
+   if [[ ${RFAIL} = 1 ]]; then
+      echo "${RED}Root account check failed"
+   fi
+   if [[ ${TFAIL} = 1 ]]; then
+      echo "${RED}Time and date check failed"
+   fi
+   if [[ ${PFAIL} = 1 ]]; then
+      echo "${RED}Turbonomic pod status check failed"
+   fi
 fi
 if [[ ${VERBOSE} = 0 ]]; then
     echo "${WHITE}If you need more details for any of the checks, re-run the script with the -v switch for verbose mode"

@@ -627,7 +627,7 @@ echo " "
 if [[ ${FAILED} = 0 ]]; then
    echo "${WHITE}All tests ${GREEN}PASSED${WHITE} you can proceed with upgrade!"
 else
-   echo "${RED}**${WHITE}You have${RED}${FAILED} FAILED check(s)${WHITE} that need to be resolved before upgrading, if you cannot resolve **please contact IBM Turbonomic support${RED}**"
+   echo "${RED}**${WHITE}You have ${RED}${FAILED} FAILED check(s)${WHITE} that need to be resolved before upgrading, if you cannot resolve **please contact IBM Turbonomic support${RED}**"
 fi
 if [[ ${VERBOSE} = 0 ]]; then
     echo "${WHITE}If you need more details for any of the checks, re-run the script with the -v switch for verbose mode"

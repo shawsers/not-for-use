@@ -180,7 +180,7 @@ check_database(){
                     if [[ ${VERBOSE} = 1 ]]; then
                         echo "${RED}The version of MariaDB is below version ${MDBV} you will also need to upgrade it post IBM Turbonomic upgrade following the steps in the install guide."
                     fi
-                    echo "${RED}MariaDB version: ${MDBV} check FAILED"
+                    echo "${RED}MariaDB version check FAILED"
                     let "FAILED=FAILED+1"
                     MVFAIL=1
                     SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )

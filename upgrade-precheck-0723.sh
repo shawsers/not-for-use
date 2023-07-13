@@ -4,6 +4,8 @@
 echo " "
 #MariaDB Version Check - latest supported version
 MDBV="10.5.20"
+
+#Color changes for output
 RED=`tput setaf 1`
 WHITE=`tput setaf 7`
 GREEN=`tput setaf 2`
@@ -11,6 +13,7 @@ BLUE=`tput setaf 4`
 YELLOW=`tput setaf 3`
 NC=`tput sgr0` # No Color
 
+#Variables
 DFAIL=0
 EFAIL=0
 MFAIL=0
@@ -54,6 +57,7 @@ check_space(){
     echo "${WHITE}****************************"
     echo "Checking for free disk space..."
     VARSPACE=$(df | egrep -v "overlay|shm")
+    VARSPACEGB=$(df -h|egrep -v "overlay|shm"|grep /var$ | awk {'print $4'})
     if [[ ${VERBOSE} = 1 ]]; then
         df -h | egrep -v "overlay|shm"
         echo " "
@@ -66,7 +70,7 @@ check_space(){
         SUMMARY+=( "${WHITE}Disk space check | ${GREEN}PASSED" )
     else
         if [[ ${VERBOSE} = 1 ]]; then
-            echo "${RED}/var has less than 12GB free - if needed remove un-used docker images to clear enough space."
+            echo "${RED}/var has less than 12.5GB free - if needed remove un-used docker images to clear enough space."
             echo "${WHITE}***************************"
             echo " "
             echo "${WHITE}Reclaimable space list below - By deleting un-used docker images${WHITE}"
@@ -74,14 +78,14 @@ check_space(){
                 docker_command=`which crictl`
                 echo "${WHITE}To reclaim space from un-used images above you need to confirm the previous version of IBM Turbonomic images installed:"
                 echo "Run the command ${YELLOW}'sudo crictl images | grep turbonomic/auth'${WHITE} to find the previous versions."
-                echo "Run the command ${YELLOW}'for i in \`sudo crictl images | grep 8.7.5 | awk '{print \$3}'\`; do sudo crictl rmi \$i;done'${WHITE} replacing ${YELLOW}'8.7.5'${YELLOW} with the old previous versions of the images installed to be removed to clear up the required disk space."
+                echo "Run the command ${YELLOW}'for i in \`sudo crictl images | grep 8.8.1 | awk '{print \$3}'\`; do sudo crictl rmi \$i;done'${WHITE} replacing ${YELLOW}'8.8.1'${YELLOW} with the old previous versions of the images installed to be removed to clear up the required disk space."
                 echo "${WHITE}***************************"
             else
                 docker_command=`which docker`
                 sudo docker system df
                 echo "${WHITE}To reclaim space from un-used docker images above you need to confirm the previous version of IBM Turbonomic images installed:"
                 echo "Run the command ${YELLOW}'sudo docker images | grep turbonomic/auth'${WHITE} to find the previous versions."
-                echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 8.3.0 | awk '{print \$3}'\`; do sudo docker rmi \$i;done'${WHITE} replacing ${YELLOW}'8.3.0'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space."
+                echo "Run the command ${YELLOW}'for i in \`sudo docker images | grep 8.8.1 | awk '{print \$3}'\`; do sudo docker rmi \$i;done'${WHITE} replacing ${YELLOW}'8.8.1'${YELLOW} with the old previous versions of the docker images installed to be removed to clear up the required disk space."
                 echo "${WHITE}***************************"
             fi
         fi
@@ -163,6 +167,7 @@ check_database(){
         active)
                 if [[ ${VERBOSE} = 1 ]]; then
                     echo "${GREEN}MariaDB service is running."
+                    echo " "
                     echo "${WHITE}Checking MariaDB version"
                 fi
                 MVERSION=$(systemctl list-units --all -t service --full --no-legend "mariadb.service" | awk {'print $6'})
@@ -175,7 +180,7 @@ check_database(){
                     if [[ ${VERBOSE} = 1 ]]; then
                         echo "${RED}The version of MariaDB is below version ${MDBV} you will also need to upgrade it post IBM Turbonomic upgrade following the steps in the install guide."
                     fi
-                    echo "${RED}MariaDB version check FAILED"
+                    echo "${RED}MariaDB version: ${MDBV} check FAILED"
                     let "FAILED=FAILED+1"
                     MVFAIL=1
                     SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )
@@ -662,10 +667,10 @@ else
    echo "${RED}**${WHITE}You have ${RED}${FAILED} FAILED check(s)${WHITE} that should be resolved before upgrading, if you cannot resolve **please contact IBM Turbonomic support${RED}**"
    echo "${RED}**${WHITE}List of ${RED}FAILED${WHITE} items to resolve:"
    if [[ ${DFAIL} = 1 ]]; then
-      echo "${RED}Disk space check failed"
+      echo "${RED}Disk space check for /var failed as it only has $VARSPACEGB free and needs more free space"
    fi
    if [[ ${EFAIL} = 1 ]]; then
-      echo "${RED}Endpoint check failed"
+      echo "${RED}Endpoint check failed for online upgrades"
    fi
    if [[ ${MVFAIL} = 1 ]]; then
       echo "${RED}MariaDB version: $MVERSION check failed, should be upgraded to version: ${MDBV}"

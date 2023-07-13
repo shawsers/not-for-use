@@ -647,8 +647,8 @@ echo " "
 if [[ ${FAILED} = 0 ]]; then
    echo "${WHITE}All tests ${GREEN}PASSED${WHITE} you can proceed with upgrade!"
 else
-   echo "${RED}**${WHITE}You have ${RED}${FAILED} FAILED check(s)${WHITE} that need to be resolved before upgrading, if you cannot resolve **please contact IBM Turbonomic support${RED}**"
-   echo "${WHITE}List of ${RED}FAILED${WHITE} items to resolve:"
+   echo "${RED}**${WHITE}You have ${RED}${FAILED} FAILED check(s)${WHITE} that should be resolved before upgrading, if you cannot resolve **please contact IBM Turbonomic support${RED}**"
+   echo "${RED}**${WHITE}List of ${RED}FAILED${WHITE} items to resolve:"
    if [[ ${DFAIL} = 1 ]]; then
       echo "${RED}Disk space check failed"
    fi

@@ -235,8 +235,12 @@ check_kubernetes_certs(){
     # As the command works, let's get the version
     #kubeVersion=$(/usr/local/bin/kubectl version | awk '{print $4}' | head -1 | awk -F: '{print $2}' | sed 's/"//g' | sed 's/,//g')
     kubeVersion=$(/usr/local/bin/kubectl version --output=yaml | grep -m1 gitVersion | awk {'print $2'} | awk -F. '{print $2}')
-    kubeFullVersion=$(/usr/local/bin/kubectl version --output=yaml | grep -m1 gitVersion | awk {'print $2'})
-    echo "Kubernetes version installed is: $kubeFullVersion"
+    kubeCVersion=$(/usr/local/bin/kubectl version --output=yaml | grep clientVersion -F5 | grep gitVersion | awk {'print $2'})
+    kubeSVersion=$(/usr/local/bin/kubectl version --output=yaml | grep serverVersion -F5 | grep gitVersion | awk {'print $2'})
+    echo " "
+    echo "Kubernetes Client Version installed is: $kubeCVersion"
+    echo "Kubernetes Server Version installed is: $kubeSVersion"
+    echo " "
         if [[ $kubeVersion -ge 20 ]]; then
             CERT_OUTPUT=$(sudo /usr/local/bin/kubeadm certs check-expiration 2>/dev/null | sed -n '/CERTIFICATE/,/^CERTIFICATE AUTHORITY/{//!p;}')
             if [[ ${VERBOSE} = 1 ]]; then
@@ -308,6 +312,9 @@ check_kubernetes_certs(){
     if [[ ${#EXPIRED_CERTS[@]} = 0 && ${#ERRORS[@]} = 0 ]]; then
         echo "${GREEN}Certificate checks PASSED"
         SUMMARY+=( "${WHITE}Certificate checks | ${GREEN}PASSED" )
+        if [[ ${KFAIL} = 1 ]]; then
+           echo "${RED}Kubernetes service (kubelet) failed, could be related to expired certificates..."
+        fi
     else
         echo "${RED}Certificate checks FAILED"
         let "FAILED=FAILED+1"

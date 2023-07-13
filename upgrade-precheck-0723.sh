@@ -2,6 +2,8 @@
 #Upgrade pre-check script - Jul. 13, 2023
 #Author: CS/JS
 echo " "
+#MariaDB Version Check - latest supported version
+MDBV="10.5.20"
 RED=`tput setaf 1`
 WHITE=`tput setaf 7`
 GREEN=`tput setaf 2`
@@ -12,6 +14,7 @@ NC=`tput sgr0` # No Color
 DFAIL=0
 EFAIL=0
 MFAIL=0
+MVFAIL=0
 KFAIL=0
 CFAIL=0
 RFAIL=0
@@ -163,18 +166,18 @@ check_database(){
                     echo "${WHITE}Checking MariaDB version"
                 fi
                 MVERSION=$(systemctl list-units --all -t service --full --no-legend "mariadb.service" | awk {'print $6'})
-                # Compare version (if 10.5.20 is the output, that means the version is either equals or above this)
-                VERSION_COMPARE=$(echo -e "10.5.20\n${MVERSION}" | sort -V | head -n1)
-                if [[ ${VERSION_COMPARE} = "10.5.20" ]]; then
+                # Compare version (if $MDBV variable value is the output, that means the version is either equals or above this)
+                VERSION_COMPARE=$(echo -e "${MDBV}\n${MVERSION}" | sort -V | head -n1)
+                if [[ ${VERSION_COMPARE} = ${MDBV} ]]; then
                     echo "${GREEN}MariaDB checks PASSED"
                     SUMMARY+=( "${WHITE}MariaDB checks | ${GREEN}PASSED" )
                 else                    
                     if [[ ${VERBOSE} = 1 ]]; then
-                        echo "${RED}The version of MariaDB is below version 10.5.20 you will also need to upgrade it post IBM Turbonomic upgrade following the steps in the install guide."
+                        echo "${RED}The version of MariaDB is below version ${MDBV} you will also need to upgrade it post IBM Turbonomic upgrade following the steps in the install guide."
                     fi
                     echo "${RED}MariaDB version check FAILED"
                     let "FAILED=FAILED+1"
-                    MFAIL=1
+                    MVFAIL=1
                     SUMMARY+=( "${WHITE}MariaDB checks | ${RED}FAILED" )
                 fi
                 ;;
@@ -664,11 +667,14 @@ else
    if [[ ${EFAIL} = 1 ]]; then
       echo "${RED}Endpoint check failed"
    fi
+   if [[ ${MVFAIL} = 1 ]]; then
+      echo "${RED}MariaDB version: $MVERSION check failed, should be upgraded to version: ${MDBV}"
+   fi   
    if [[ ${MFAIL} = 1 ]]; then
-      echo "${RED}MariaDB check failed"
+      echo "${RED}MariaDB service check failed"
    fi
    if [[ ${KFAIL} = 1 ]]; then
-      echo "${RED}Kubernetes (kubelet) service check failed"
+      echo "${RED}Kubernetes (kubelet) service check failed, could be related to expired certificates"
    fi
    if [[ ${CFAIL} = 1 ]]; then
       echo "${RED}Certificate check failed"

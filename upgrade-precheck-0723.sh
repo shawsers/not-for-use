@@ -1,5 +1,5 @@
 #!/bin/bash
-#Upgrade pre-check script - Jul. 12, 2023
+#Upgrade pre-check script - Jul. 13, 2023
 #Author: CS/JS
 echo " "
 RED=`tput setaf 1`

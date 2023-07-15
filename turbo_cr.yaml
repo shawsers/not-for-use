@@ -6,7 +6,7 @@ spec:
   # This configuration file is used for production.
   # Default values copied from <project_dir>/helm-charts/xl/values.yaml
 
-  # Default values for xl.
+  # Default values for xl for use in Azure only with the storage class named: managed
   # This is a YAML-formatted file.
   # Declare variables to be passed into your templates.
 
@@ -18,7 +18,7 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: icr.io/cpopen/turbonomic
-    tag: 8.9.3
+    tag: 8.9.4
   # externalIP: 10.0.2.15
   # externalDbIP: 10.0.2.15
   # externalTimescaleDBIP: 10.0.2.15
@@ -40,17 +40,19 @@ spec:
   # Component selector - Probes
   actionscript:
     enabled: true
-  azure:
+  webhooks:
     enabled: true
+  azure:
+    enabled: false
   kubeturbo:
     enabled: true
   prometheus-mysql-exporter:
-    enabled: true
+    enabled: false
     mysql:
       user: root
       pass: vmturbo
   prometheus:
-    enabled: true
+    enabled: false
   prometurbo:
     enabled: true
   # Embedded Reporting
@@ -58,8 +60,9 @@ spec:
     enabled: true
   postgresql:
     persistence:
-      size: 500Gi
+      size: 100Gi
   extractor:
     enabled: true
   reporting:
     enabled: true
+

@@ -18,7 +18,7 @@ spec:
   #  imageUsername: turbouser
   #  imagePassword: turbopassword
     repository: icr.io/cpopen/turbonomic
-    tag: 8.9.4
+    tag: 8.8.6
   # externalIP: 10.0.2.15
   # externalDbIP: 10.0.2.15
   # externalTimescaleDBIP: 10.0.2.15
@@ -29,7 +29,7 @@ spec:
       grafanaAdminPassword: grafana
   grafana:
     # Grafana is disabled by default. To enable it, uncomment:
-    enabled: true
+    enabled: false
     adminPassword: grafana
     grafana.ini:
       database:
@@ -39,13 +39,13 @@ spec:
 
   # Component selector - Probes
   actionscript:
-    enabled: true
+    enabled: false
   webhooks:
-    enabled: true
+    enabled: false
   azure:
     enabled: false
   kubeturbo:
-    enabled: true
+    enabled: false
   prometheus-mysql-exporter:
     enabled: false
     mysql:
@@ -54,15 +54,15 @@ spec:
   prometheus:
     enabled: false
   prometurbo:
-    enabled: true
+    enabled: false
   # Embedded Reporting
   timescaledb:
-    enabled: true
+    enabled: false
   postgresql:
     persistence:
       size: 100Gi
   extractor:
-    enabled: true
+    enabled: false
   reporting:
-    enabled: true
+    enabled: false
 

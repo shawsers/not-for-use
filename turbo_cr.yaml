@@ -14,7 +14,7 @@ spec:
 
   # Global settings
   global:
-  #  registry: index.docker.io
+    registry: shawsers123.jfrog.io/docker-trial
     imageUsername: jason.shaw@ibm.com
     imagePassword: cmVmdGtuOjAxOjE3MjIxMDY5NjE6Umt6V3pGZzJ0SHB1UTFsRE1heG5aUGpNYms3
     repository: shawsers123.jfrog.io/docker-trial

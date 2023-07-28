@@ -18,6 +18,8 @@ spec:
         name: t8c-operator
     spec:
       serviceAccountName: t8c-operator
+      imagePullSecrets:
+      - name: artifactory
       containers:
       - name: t8c-operator
         image: shawsers123.jfrog.io/docker-trial/t8c-operator:42.36

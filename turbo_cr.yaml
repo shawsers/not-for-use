@@ -48,19 +48,6 @@ spec:
     enabled: false
   webhooks:
     enabled: false
-  azure:
-    enabled: false
-  kubeturbo:
-    enabled: false
-  prometheus-mysql-exporter:
-    enabled: false
-    mysql:
-      user: root
-      pass: vmturbo
-  prometheus:
-    enabled: false
-  prometurbo:
-    enabled: false
   # Embedded Reporting
   timescaledb:
     enabled: false

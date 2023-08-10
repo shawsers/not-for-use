@@ -42,6 +42,9 @@ spec:
   # Component selector - Probes
   actionscript:
     enabled: false
+  db:
+    persistence:
+      size: 100Gi
   server-power-modeler:
     enabled: false
   suspend:

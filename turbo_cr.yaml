@@ -18,7 +18,7 @@ spec:
     # imageUsername: 
     # imagePassword: 
     repository: icr.io/cpopen/turbonomic
-    tag: 8.7.6
+    tag: 8.10.1
     telemetry:
       enabled: false
   # externalIP: 10.0.2.15
@@ -31,7 +31,7 @@ spec:
       grafanaAdminPassword: grafana
   grafana:
     # Grafana is disabled by default. To enable it, uncomment:
-    enabled: false
+    enabled: true
     adminPassword: grafana
     grafana.ini:
       database:
@@ -55,11 +55,11 @@ spec:
     enabled: false
   # Embedded Reporting
   timescaledb:
-    enabled: false
+    enabled: true
   postgresql:
     persistence:
       size: 100Gi
   extractor:
-    enabled: false
+    enabled: true
   reporting:
-    enabled: false
+    enabled: true

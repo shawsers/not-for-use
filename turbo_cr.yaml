@@ -38,7 +38,19 @@ spec:
         # Store data in sqlite3 (no persistence across restarts) by default. To persist, uncomment:
         type: postgres
         password: grafana
-
+  #TSC server components
+  nginx:
+    externalTrafficPolicy: Cluster
+    tunnel:
+      expose: true
+  rsyslog:
+    tunnel:
+      expose: true
+  tunnel:
+    enabled: true
+    mode: server
+  client-network:
+    enabled: true
   # Component selector - Probes
   actionscript:
     enabled: false

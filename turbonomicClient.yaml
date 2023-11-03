@@ -1,0 +1,7 @@
+apiVersion: clients.turbonomic.ibm.com/v1alpha1
+kind: TurbonomicClient
+metadata:
+  name: turbonomicclient-release
+spec:
+  global:
+    version: 8.10.4

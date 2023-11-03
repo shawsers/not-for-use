@@ -1,0 +1,15 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: t8c-client-operator-catalog
+  namespace: olm
+spec:
+  grpcPodConfig:
+    securityContextConfig: restricted
+  displayName: Turbonomic Client Operator
+  image: icr.io/cpopen/t8c-client-operator-catalog
+  publisher: Turbonomic.com
+  sourceType: grpc
+  updateStrategy:
+    registryPoll:
+      interval: 60m

@@ -26,12 +26,13 @@ spec:
   # externalTimescaleDBIP: 10.0.2.15
   # enableExternalSecrets: true
     storageClassName: managed
+    deploymentMode: HYBRID_SAAS
   properties:
     extractor:
       grafanaAdminPassword: grafana
   grafana:
     # Grafana is disabled by default. To enable it, uncomment:
-    enabled: true
+    enabled: false
     adminPassword: grafana
     grafana.ini:
       database:
@@ -67,11 +68,11 @@ spec:
     enabled: false
   # Embedded Reporting
   timescaledb:
-    enabled: true
+    enabled: false
   postgresql:
     persistence:
       size: 100Gi
   extractor:
-    enabled: true
+    enabled: false
   reporting:
-    enabled: true
+    enabled: false

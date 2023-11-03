@@ -26,7 +26,7 @@ spec:
   # externalTimescaleDBIP: 10.0.2.15
   # enableExternalSecrets: true
     storageClassName: managed
-    deploymentMode: HYBRID_SAAS
+    #deploymentMode: HYBRID_SAAS
   properties:
     extractor:
       grafanaAdminPassword: grafana

@@ -32,7 +32,7 @@ spec:
       grafanaAdminPassword: grafana
   grafana:
     # Grafana is disabled by default. To enable it, uncomment:
-    enabled: false
+    enabled: true
     adminPassword: grafana
     grafana.ini:
       database:
@@ -68,11 +68,11 @@ spec:
     enabled: false
   # Embedded Reporting
   timescaledb:
-    enabled: false
+    enabled: true
   postgresql:
     persistence:
       size: 100Gi
   extractor:
-    enabled: false
+    enabled: true
   reporting:
-    enabled: false
+    enabled: true

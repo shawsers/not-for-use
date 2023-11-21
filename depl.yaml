@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: scaling-multiple-up-mishil
-  namespace: mishil-regression
+  namespace: test
 spec:
   replicas: 2
   selector:

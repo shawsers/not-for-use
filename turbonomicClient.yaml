@@ -4,4 +4,4 @@ metadata:
   name: turbonomicclient-release
 spec:
   global:
-    version: 8.10.4
+    version: 8.10.6

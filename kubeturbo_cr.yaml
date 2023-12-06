@@ -37,7 +37,7 @@ spec:
 
   # Supply a targetName for user friendly identification of the k8s cluster
   targetConfig:
-    targetName: AKS-Cluster
+    targetName: AKS-Turbo-Server
 
   # Uncomment next lines to use dynamic logging level
   # Changing this value does not require restart of Kubeturbo but takes about 1 minute to take effect

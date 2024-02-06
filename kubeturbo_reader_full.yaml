@@ -124,7 +124,7 @@ data:
         "communicationConfig": {
             "serverMeta": {
                 "version": "8.11",
-                "turboServer": "https://try.turbonomic.io"
+                "turboServer": "<https://Turbo_Server_URL_or_IP_address>"
             },
             "restAPIConfig": {
                 "opsManagerUserName": "<Turbo_username>",
@@ -132,7 +132,7 @@ data:
             }
         },
         "targetConfig": {
-            "targetName":"JS-EKS-Cluster"
+            "targetName":"<Your_Cluster_Name>"
         },
         "HANodeConfig": {
             "nodeRoles": [ "master"]
@@ -246,6 +246,6 @@ metadata:
   namespace: turbo
 type: Opaque
 data:
-  username: a3ViZXR1cmJv
-  password: a3ViZXR1cmJv
+  username: BASE64encodedValue
+  password: BASE64encodedValue
 ---

@@ -4,7 +4,7 @@ metadata:
   name: gp3
 provisioner: ebs.csi.aws.com
 volumeBindingMode: WaitForFirstConsumer
-ReclaimPolicy: Delete 
+reclaimPolicy: Retain
 parameters:
   csi.storage.k8s.io/fstype: xfs
   type: gp3

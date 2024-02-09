@@ -154,7 +154,7 @@ spec:
   # Turbo server version and address
   serverMeta:
     version: "8.11.3"
-    turboServer: https://Turbo_server_URL
+    turboServer: https://Turbo_server_URL_or_IP_Address
 
   # URL format for Authenticated and Non-Authenticated
   #   proxy: "http://username:password@proxyserver:proxyport or http://proxyserver:proxyport"  
@@ -179,7 +179,7 @@ spec:
 
   # Supply a targetName for user friendly identification of the k8s cluster
   targetConfig:
-    targetName: Target_name
+    targetName: Your_Cluster_name
 
   # Uncomment next lines to use dynamic logging level
   # Changing this value does not require restart of Kubeturbo but takes about 1 minute to take effect

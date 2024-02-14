@@ -1,0 +1,80 @@
+apiVersion: charts.helm.k8s.io/v1
+kind: Xl
+metadata:
+  name: xl-release
+spec:
+  # This configuration file is used for production.
+  # Default values copied from <project_dir>/helm-charts/xl/values.yaml
+
+  # Default values for xl for use in Azure only with the storage class named: managed
+  # This is a YAML-formatted file.
+  # Declare variables to be passed into your templates.
+
+  # Any changes run : kubectl apply -f deploy/crds/charts_v1alpha1_xl_cr.yaml -n turbonomic
+
+  # Global settings
+  global:
+    # registry: 
+    # imageUsername: 
+    # imagePassword: 
+    repository: icr.io/cpopen/turbonomic
+    tag: 8.11.3
+    telemetry:
+      enabled: false
+    ingress:
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+        service.beta.kubernetes.io/aws-load-balancer-ip-address-type: ipv4
+        service.beta.kubernetes.io/aws-load-balancer-name: turbo-nlb-ip
+        service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+        service.beta.kubernetes.io/aws-load-balancer-schema: external
+        service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+        service.beta.kubernetes.io/aws-load-balancer-ssl-ports: 443
+        service.beta.kubernetes.io/aws-load-balancer-subnets: subnet-07c0d8fffe30d0884
+        service.beta.kubernetes.io/aws-load-balancer-type: external
+  # externalIP: 10.0.2.15
+  # externalDbIP: 10.0.2.15
+  # externalTimescaleDBIP: 10.0.2.15
+  # enableExternalSecrets: true
+  # storageClassName: managed
+  # storageClassName: azurefile-csi
+    #deploymentMode: HYBRID_SAAS
+  properties:
+    extractor:
+      grafanaAdminPassword: grafana
+  grafana:
+    # Grafana is disabled by default. To enable it, uncomment:
+    enabled: false
+    adminPassword: grafana
+    grafana.ini:
+      database:
+        # Store data in sqlite3 (no persistence across restarts) by default. To persist, uncomment:
+        type: postgres
+        password: grafana
+  #TSC server components
+  nginx:
+    nginxIsPrimaryIngress: false
+  # Component selector - Probes
+  actionscript:
+    enabled: false
+  db:
+    persistence:
+      size: 100Gi
+  server-power-modeler:
+    enabled: false
+  suspend:
+    enabled: false
+  azure:
+    enabled: true
+  webhooks:
+    enabled: false
+  # Embedded Reporting
+  timescaledb:
+    enabled: false
+  postgresql:
+    persistence:
+      size: 100Gi
+  extractor:
+    enabled: false
+  reporting:
+    enabled: false

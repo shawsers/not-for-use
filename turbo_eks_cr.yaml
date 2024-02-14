@@ -31,7 +31,7 @@ spec:
         service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
         service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
         service.beta.kubernetes.io/aws-load-balancer-subnets: "subnet-07c0d8fffe30d0884"
-        service.beta.kubernetes.io/aws-load-balancer-type: "external"
+        service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"
   # externalIP: 10.0.2.15
   # externalDbIP: 10.0.2.15
   # externalTimescaleDBIP: 10.0.2.15
@@ -53,8 +53,8 @@ spec:
         password: grafana
   #TSC server components
   nginx:
-    externalTrafficPolicy: LoadBalancer
-    nginxIsPrimaryIngress: false
+    externalTrafficPolicy: Cluster
+  #  nginxIsPrimaryIngress: false
   # Component selector - Probes
   actionscript:
     enabled: false

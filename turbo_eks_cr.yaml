@@ -53,6 +53,7 @@ spec:
         password: grafana
   #TSC server components
   nginx:
+    externalTrafficPolicy: LoadBalancer
     nginxIsPrimaryIngress: false
   # Component selector - Probes
   actionscript:

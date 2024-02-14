@@ -23,15 +23,15 @@ spec:
       enabled: false
     ingress:
       annotations:
-        service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
-        service.beta.kubernetes.io/aws-load-balancer-ip-address-type: ipv4
-        service.beta.kubernetes.io/aws-load-balancer-name: turbo-nlb-ip
-        service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
-        service.beta.kubernetes.io/aws-load-balancer-schema: external
-        service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
-        service.beta.kubernetes.io/aws-load-balancer-ssl-ports: 443
-        service.beta.kubernetes.io/aws-load-balancer-subnets: subnet-07c0d8fffe30d0884
-        service.beta.kubernetes.io/aws-load-balancer-type: external
+        service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+        service.beta.kubernetes.io/aws-load-balancer-ip-address-type: "ipv4"
+        service.beta.kubernetes.io/aws-load-balancer-name: "turbo-nlb-ip"
+        service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
+        service.beta.kubernetes.io/aws-load-balancer-schema: "external"
+        service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+        service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+        service.beta.kubernetes.io/aws-load-balancer-subnets: "subnet-07c0d8fffe30d0884"
+        service.beta.kubernetes.io/aws-load-balancer-type: "external"
   # externalIP: 10.0.2.15
   # externalDbIP: 10.0.2.15
   # externalTimescaleDBIP: 10.0.2.15

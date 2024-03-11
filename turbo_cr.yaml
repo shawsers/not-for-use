@@ -27,7 +27,7 @@ spec:
   # enableExternalSecrets: true
     storageClassName: managed
   # storageClassName: azurefile-csi
-    #deploymentMode: HYBRID_SAAS
+    deploymentMode: HYBRID_SAAS
   properties:
     extractor:
       grafanaAdminPassword: grafana

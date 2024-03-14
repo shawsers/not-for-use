@@ -64,7 +64,7 @@ spec:
   suspend:
     enabled: false
   azure:
-    enabled: true
+    enabled: false
   webhooks:
     enabled: false
   # Embedded Reporting

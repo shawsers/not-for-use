@@ -42,15 +42,15 @@ do
 done
 echo ""
 gko=$(oc get pods -n turbo-tsc | grep t8c | awk '{print $1}')
-#oc wait --for=condition=Ready pod/$gko --timeout=-1s -n turbo
+oc wait --for=condition=Ready pod/$gko --timeout=-1s -n turbo-tsc
 echo ""
 echo "TSC operator started"
 echo ""
-echo "Deploying TSC agent via operator..."
+echo "Deploying TSC client via operator..."
 #add info on deploying TSC client
 #oc apply -f kt.yaml
 echo ""
-echo "Waiting for TSC agent to start..."
+echo "Waiting for TSC client to start..."
 read -s -n 1 -t 15
 kcount=$(oc get pods -n turbo-tsc |wc -l)
 while [ $kcount -lt 2 ]
@@ -60,9 +60,9 @@ do
 done
 echo ""
 gka=$(oc get pods -n turbo-tsc | grep kube | awk '{print $1}')
-#oc wait --for=condition=Ready pod/$gka --timeout=-1s -n turbo
+#oc wait --for=condition=Ready pod/$gka --timeout=-1s -n turbo-tsc
 echo ""
-echo "TSC agent started"
+echo "TSC client started"
 echo ""
 oc get pods -n turbo-tsc
 echo ""

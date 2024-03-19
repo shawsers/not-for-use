@@ -9,7 +9,7 @@ echo "Getting latest version of Certified TSC from OperatorHub to be installed"
 stable=$(oc get packagemanifests $kto -o jsonpath="{range .status.channels[*]}Channel: {.name} currentCSV: {.currentCSV}{'\n'}{end}" | grep stable | awk '{print $4}')
 echo $stable
 #only use stable channel for t8c-tsc-client-certified and latest version available
-curl -O 
+curl -O https://raw.githubusercontent.com/shawsers/random/main/TSC/tsc-operator.yaml
 sed "s|startingCSV: .*$|startingCSV: $stable|" tsc-operator.yaml > tsc-op.yaml
 echo""
 echo "Verifying Certified Operator"
@@ -30,40 +30,41 @@ echo "Deploying Certified TSC from OperatorHub"
 curl -O https://raw.githubusercontent.com/shawsers/random/main/TSC/tsc-operator-group.yaml
 oc apply -f tsc-operator-group.yaml
 read -s -n 1 -t 5
-###apply op.yaml file which deploys the certified TSC from OperatorHub
+###apply updated tsc-op.yaml file which deploys the certified and latest version of TSC from OperatorHub
 oc apply -f tsc-op.yaml
 read -s -n 1 -t 15
 echo "Waiting for TSC operator to start..."
-pcount=$(oc get pods -n turbo |wc -l)
+pcount=$(oc get pods -n turbo-tsc |wc -l)
 while [ $pcount -lt 1 ]
 do
   read -s -n 1 -t 2
-  pcount=$(oc get pods -n turbo |wc -l)
+  pcount=$(oc get pods -n turbo-tsc |wc -l)
 done
 echo ""
-gko=$(oc get pods -n turbo | grep t8c | awk '{print $1}')
-oc wait --for=condition=Ready pod/$gko --timeout=-1s -n turbo
+gko=$(oc get pods -n turbo-tsc | grep t8c | awk '{print $1}')
+#oc wait --for=condition=Ready pod/$gko --timeout=-1s -n turbo
 echo ""
 echo "TSC operator started"
 echo ""
 echo "Deploying TSC agent via operator..."
-oc apply -f kt.yaml
+#add info on deploying TSC client
+#oc apply -f kt.yaml
 echo ""
 echo "Waiting for TSC agent to start..."
 read -s -n 1 -t 15
-kcount=$(oc get pods -n turbo |wc -l)
+kcount=$(oc get pods -n turbo-tsc |wc -l)
 while [ $kcount -lt 2 ]
 do
   read -s -n 1 -t 2
-  kcount=$(oc get pods -n turbo |wc -l)
+  kcount=$(oc get pods -n turbo-tsc |wc -l)
 done
 echo ""
-gka=$(oc get pods -n turbo | grep kube | awk '{print $1}')
-oc wait --for=condition=Ready pod/$gka --timeout=-1s -n turbo
+gka=$(oc get pods -n turbo-tsc | grep kube | awk '{print $1}')
+#oc wait --for=condition=Ready pod/$gka --timeout=-1s -n turbo
 echo ""
 echo "TSC agent started"
 echo ""
-oc get pods -n turbo
+oc get pods -n turbo-tsc
 echo ""
 echo "Script done"
 echo ""

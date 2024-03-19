@@ -48,18 +48,23 @@ echo "TSC operator started"
 echo ""
 echo "Deploying TSC client via operator..."
 #add info on deploying TSC client
-#oc apply -f kt.yaml
+curl -O https://raw.githubusercontent.com/shawsers/random/main/turbonomicClient.yaml
+oc apply -f turbonomicClient.yaml
+echo ""
+read -s -n 1 -t 15
+curl -O https://raw.githubusercontent.com/shawsers/random/main/versionManager.yaml
+oc apply -f versionManager.yaml
 echo ""
 echo "Waiting for TSC client to start..."
 read -s -n 1 -t 15
-kcount=$(oc get pods -n turbo-tsc |wc -l)
+kcount=$(oc get pods -n skupper |wc -l)
 while [ $kcount -lt 2 ]
 do
   read -s -n 1 -t 2
-  kcount=$(oc get pods -n turbo-tsc |wc -l)
+  kcount=$(oc get pods -n skupper |wc -l)
 done
 echo ""
-gka=$(oc get pods -n turbo-tsc | grep kube | awk '{print $1}')
+#gka=$(oc get pods -n turbo-tsc | grep kube | awk '{print $1}')
 #oc wait --for=condition=Ready pod/$gka --timeout=-1s -n turbo-tsc
 echo ""
 echo "TSC client started"

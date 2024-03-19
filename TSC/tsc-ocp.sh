@@ -65,6 +65,8 @@ do
 done
 echo ""
 oc get TurbonomicClient -n turbo-tsc
+echo ""
+oc get VersionManager -n turbo-tsc
 #gka=$(oc get pods -n turbo-tsc | grep kube | awk '{print $1}')
 #oc wait --for=condition=Ready pod/$gka --timeout=-1s -n turbo-tsc
 echo ""

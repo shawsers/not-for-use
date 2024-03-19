@@ -58,12 +58,13 @@ echo ""
 echo "Waiting for TSC client to start..."
 read -s -n 1 -t 15
 kcount=$(oc get pods -n skupper |wc -l)
-while [ $kcount -lt 2 ]
+while [ $kcount -lt 6 ]
 do
   read -s -n 1 -t 2
   kcount=$(oc get pods -n skupper |wc -l)
 done
 echo ""
+oc get TurbonomicClient -n turbo-tsc
 #gka=$(oc get pods -n turbo-tsc | grep kube | awk '{print $1}')
 #oc wait --for=condition=Ready pod/$gka --timeout=-1s -n turbo-tsc
 echo ""

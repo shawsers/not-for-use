@@ -2,6 +2,7 @@ apiVersion: clients.turbonomic.ibm.com/v1alpha1
 kind: TurbonomicClient
 metadata:
   name: turbonomicclient-release
+  namespace: turbo-tsc
 spec:
   global:
     version: 8.11.5

@@ -9,7 +9,8 @@ echo "Getting latest version of Certified TSC from OperatorHub to be installed"
 stable=$(oc get packagemanifests $kto -o jsonpath="{range .status.channels[*]}Channel: {.name} currentCSV: {.currentCSV}{'\n'}{end}" | grep stable | awk '{print $4}')
 echo $stable
 #only use stable channel for t8c-tsc-client-certified and latest version available
-sed "s|startingCSV: .*$|startingCSV: $stable|" operator.yaml > op.yaml
+curl -O 
+sed "s|startingCSV: .*$|startingCSV: $stable|" tsc-operator.yaml > tsc-op.yaml
 echo""
 echo "Verifying Certified Operator"
 vo=$(oc get packagemanifests $kto -o jsonpath={.status.catalogSource})
@@ -21,15 +22,16 @@ vom=$(oc get packagemanifests $kto -o jsonpath={.status.catalogSourceNamespace})
 #output should be "openshift-marketplace"
 echo $vom
 echo ""
-echo "Creating turbo project/namespace to deploy TSC into"
-oc create ns turbo
+echo "Creating turbo-tsc project/namespace to deploy TSC into"
+oc create ns turbo-tsc
 echo ""
 echo "Deploying Certified TSC from OperatorHub"
-###apply operator-group.yaml file and update it as needed with all details
-oc apply -f operator-group.yaml
+###apply tsc-operator-group.yaml file and update it as needed with all details
+curl -O https://raw.githubusercontent.com/shawsers/random/main/TSC/tsc-operator-group.yaml
+oc apply -f tsc-operator-group.yaml
 read -s -n 1 -t 5
 ###apply op.yaml file which deploys the certified TSC from OperatorHub
-oc apply -f op.yaml
+oc apply -f tsc-op.yaml
 read -s -n 1 -t 15
 echo "Waiting for TSC operator to start..."
 pcount=$(oc get pods -n turbo |wc -l)

@@ -1,0 +1,12 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: t8c-tsc-client-certified
+  namespace: turbo-tsc
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: t8c-tsc-client-certified
+  source: certified-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: t8c-tsc-client-certified.v1.2.6

@@ -194,7 +194,7 @@ spec:
     repository: icr.io/cpopen/turbonomic/kubeturbo
     tag: 8.10.3
   # Uncomment to use an image from RHCC for cpu-frequency getter job - predefined in OCP Operator Hub version
-  #  busyboxRepository: registry.access.redhat.com/ubi8/ubi-minimal
+    busyboxRepository: icr.io/cpopen/turbonomic/cpufreqgetter:latest
 
   # Uncomment out to allow execution in OCP environments
   args:

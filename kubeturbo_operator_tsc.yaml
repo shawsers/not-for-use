@@ -153,7 +153,6 @@ spec:
 
   # Turbo server version and address
   serverMeta:
-    version: "8.12"
     turboServer: https://Turbo_server_URL_or_IP_Address
 
   # URL format for Authenticated and Non-Authenticated

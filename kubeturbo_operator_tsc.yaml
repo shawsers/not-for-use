@@ -185,9 +185,9 @@ spec:
   # Changing this value does not require restart of Kubeturbo but takes about 1 minute to take effect
   # logging:
   #   level: 2
-  # nodePoolSize:
-  #   min: 1
-  #   max: 1000
+  nodePoolSize:
+    min: 3
+    max: 1000
 
   # Uncomment next lines to specify a repository and image tag for kubeturbo
   #image:
@@ -197,8 +197,8 @@ spec:
   #  busyboxRepository: registry.access.redhat.com/ubi8/ubi-minimal
 
   # Uncomment out to allow execution in OCP environments
-  #args:
-  #  sccsupport: "*"
+  args:
+    sccsupport: "*"
 
   # Uncomment out to specify kubeturbo container specifications when needed (quotas set on ns)
   #resources:

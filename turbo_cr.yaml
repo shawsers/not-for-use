@@ -31,6 +31,8 @@ spec:
   properties:
     extractor:
       grafanaAdminPassword: grafana
+    topology-processor:
+      resizeDownWarmUpIntervalHours: 0
   grafana:
     # Grafana is disabled by default. To enable it, uncomment:
     enabled: false

@@ -28,6 +28,7 @@ spec:
     storageClassName: managed
   # storageClassName: azurefile-csi
     deploymentMode: HYBRID_SAAS
+    # deploymentModes available: HYBRID_SAAS, SERVER, SAAS_TRIAL, CLOUDABILITY_PREMIUM
   properties:
     extractor:
       grafanaAdminPassword: grafana

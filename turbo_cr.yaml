@@ -27,7 +27,7 @@ spec:
   # enableExternalSecrets: true
     storageClassName: managed
   # storageClassName: azurefile-csi
-    deploymentMode: HYBRID_SAAS
+    deploymentMode: SAAS_TRIAL
     # deploymentModes available: HYBRID_SAAS, SERVER, SAAS_TRIAL, CLOUDABILITY_PREMIUM
   properties:
     extractor:
@@ -81,4 +81,4 @@ spec:
   reporting:
     enabled: false
   cloudability:
-    enabled: true
+    enabled: false

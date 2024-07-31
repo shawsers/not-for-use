@@ -18,7 +18,7 @@ spec:
     # imageUsername: 
     # imagePassword: 
     repository: icr.io/cpopen/turbonomic
-    tag: 8.13.0
+    tag: 8.13.1
     telemetry:
       enabled: false
   # externalIP: 10.0.2.15

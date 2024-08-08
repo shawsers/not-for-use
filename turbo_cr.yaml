@@ -18,7 +18,7 @@ spec:
     # imageUsername: 
     # imagePassword: 
     repository: icr.io/cpopen/turbonomic
-    tag: 8.13.1
+    tag: 8.13.2
     telemetry:
       enabled: false
   # externalIP: 10.0.2.15
@@ -65,8 +65,8 @@ spec:
   # Component selector - Probes
   actionscript:
     enabled: false
-  oauth2:
-    enabled: true
+  #oauth2:
+  #  enabled: true
   db:
     persistence:
       size: 100Gi

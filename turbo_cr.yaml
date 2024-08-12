@@ -65,8 +65,8 @@ spec:
   # Component selector - Probes
   actionscript:
     enabled: false
-  #oauth2:
-  #  enabled: true
+  oauth2:
+    enabled: true
   db:
     persistence:
       size: 100Gi

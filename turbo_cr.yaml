@@ -34,6 +34,8 @@ spec:
       grafanaAdminPassword: grafana
     topology-processor:
       resizeDownWarmUpIntervalHours: 0
+    market: 
+      suspensionThrottlingPerCluster: false  
     global:
       featureFlags:
         enableMandatoryProbeAuth: false

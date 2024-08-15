@@ -202,7 +202,7 @@ data:
     {
         "communicationConfig": {
             "serverMeta": {
-                "turboServer": "<https://Turbo_Server_URL_or_IP_address>"
+                "turboServer": "TURBO_SERVER"
             },
             "restAPIConfig": {
                 "opsManagerUserName": "<Turbo_username>",

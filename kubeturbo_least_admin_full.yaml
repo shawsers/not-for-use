@@ -202,7 +202,6 @@ data:
     {
         "communicationConfig": {
             "serverMeta": {
-                "version": "8.11",
                 "turboServer": "<https://Turbo_Server_URL_or_IP_address>"
             },
             "restAPIConfig": {
@@ -242,7 +241,7 @@ spec:
       containers:
       - name: kubeturbo
         # Replace the image version with matching Turbo Server version such as 8.11.1
-        image: icr.io/cpopen/turbonomic/kubeturbo:8.11.2
+        image: icr.io/cpopen/turbonomic/kubeturbo:<turbo_version>
         env:
           - name: KUBETURBO_NAMESPACE
             valueFrom:
@@ -325,6 +324,6 @@ metadata:
   namespace: turbo
 type: Opaque
 data:
-  username: BASE64encodedValue
-  password: BASE64encodedValue
+  clientid: <base64_clientid>
+  clientsecret: <base64_clientsecret>
 ---

@@ -190,6 +190,10 @@ data:
         "min": 1,
         "max": 1000
       },
+      "daemonPodDetectors": {
+        "namespaces": ["turbo-tsc"],
+        "podNamePatterns": ["<regex>"]
+      },
       "systemWorkloadDetectors": {
         "namespacePatterns": ["kube-.*","openshift-.*","cattle.*"]
       },

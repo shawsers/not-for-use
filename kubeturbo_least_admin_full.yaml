@@ -261,7 +261,7 @@ spec:
           # Uncomment for pod moves in OpenShift
           #- --scc-support=*
           # Uncomment for pod moves with pvs
-          #- --fail-volume-pod-moves=false
+          - --fail-volume-pod-moves=false
           # Uncomment to override default, and specify your own location
           #- --busybox-image=docker.io/busybox
           # or uncomment below to pull from RHCC

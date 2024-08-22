@@ -245,7 +245,7 @@ spec:
       containers:
       - name: kubeturbo
         # Replace the image version with matching Turbo Server version such as 8.11.1
-        image: icr.io/cpopen/turbonomic/kubeturbo:latest
+        image: icr.io/cpopen/turbonomic/kubeturbo:<turbo_version>
         env:
           - name: KUBETURBO_NAMESPACE
             valueFrom:

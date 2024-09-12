@@ -40,8 +40,8 @@ spec:
       featureFlags:
         enableMandatoryProbeAuth: false
         enableProbeAuth: true
-      oauth2:
-        audience: turbonomic
+      #oauth2:
+      #  audience: turbonomic
   grafana:
     # Grafana is disabled by default. To enable it, uncomment:
     enabled: false
@@ -67,8 +67,8 @@ spec:
   # Component selector - Probes
   actionscript:
     enabled: false
-  oauth2:
-    enabled: true
+  #oauth2:
+  #  enabled: true
   db:
     persistence:
       size: 100Gi

@@ -36,10 +36,10 @@ spec:
       resizeDownWarmUpIntervalHours: 0
     market: 
       suspensionThrottlingPerCluster: false  
-    global:
-      featureFlags:
-        enableMandatoryProbeAuth: false
-        enableProbeAuth: true
+    #global:
+    #  featureFlags:
+    #    enableMandatoryProbeAuth: false
+    #    enableProbeAuth: true
       #oauth2:
       #  audience: turbonomic
   grafana:

@@ -199,7 +199,7 @@ data:
       },
       "exclusionDetectors": {
         "operatorControlledWorkloadsPatterns": [],
-        "operatorControlledNamespacePatterns": []
+        "operatorControlledNamespacePatterns": [turbonomic]
       }
     }
   turbo.config: |-

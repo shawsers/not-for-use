@@ -82,10 +82,10 @@ spec:
     enabled: false
   # Embedded Reporting
   timescaledb:
-    enabled: false
+    enabled: true
   postgresql:
     persistence:
-      size: 100Gi
+      size: 110Gi
   extractor:
     enabled: false
   reporting:

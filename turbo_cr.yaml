@@ -18,7 +18,7 @@ spec:
     # imageUsername: 
     # imagePassword: 
     repository: icr.io/cpopen/turbonomic
-    tag: 8.14.2
+    tag: 8.14.5
     telemetry:
       enabled: false
   # externalIP: 10.0.2.15
@@ -82,7 +82,7 @@ spec:
     enabled: false
   # Embedded Reporting
   timescaledb:
-    enabled: true
+    enabled: false
   postgresql:
     persistence:
       size: 110Gi

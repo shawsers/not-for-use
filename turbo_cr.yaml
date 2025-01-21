@@ -18,7 +18,7 @@ spec:
     # imageUsername: 
     # imagePassword: 
     repository: icr.io/cpopen/turbonomic
-    tag: 8.14.0
+    tag: 8.14.6
     telemetry:
       enabled: false
   # externalIP: 10.0.2.15
@@ -27,7 +27,7 @@ spec:
   # enableExternalSecrets: true
     storageClassName: managed
   # storageClassName: azurefile-csi
-    deploymentMode: CLOUDABILITY_PREMIUM
+    deploymentMode: HYBRID_SAAS
     # deploymentModes available: HYBRID_SAAS, SERVER, SAAS_TRIAL, CLOUDABILITY_PREMIUM
   properties:
     extractor:

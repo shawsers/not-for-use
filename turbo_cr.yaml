@@ -18,7 +18,7 @@ spec:
     # imageUsername: 
     # imagePassword: 
     repository: icr.io/cpopen/turbonomic
-    tag: 8.15.5
+    tag: 8.15.6
     telemetry:
       enabled: false
   # externalIP: 10.0.2.15
@@ -55,15 +55,15 @@ spec:
   nginx:
     externalTrafficPolicy: Cluster
     tunnel:
-      expose: true
+      expose: false
   rsyslog:
     tunnel:
-      expose: true
+      expose: false
   tunnel:
-    enabled: true
+    enabled: false
     mode: server
   client-network:
-    enabled: true
+    enabled: false
   # Component selector - Probes
   actionscript:
     enabled: false
@@ -77,11 +77,11 @@ spec:
   #suspend:
   #  enabled: false
   azure:
-    enabled: true
+    enabled: false
   webhooks:
     enabled: false
   actionscripts:
-    enabled: true
+    enabled: false
   # Embedded Reporting
   timescaledb:
     enabled: false
@@ -93,6 +93,6 @@ spec:
   reporting:
     enabled: false
   cloudability:
-    enabled: true
+    enabled: false
   apptio-sftp:
-    enabled: true
+    enabled: false

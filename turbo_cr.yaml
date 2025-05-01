@@ -55,15 +55,15 @@ spec:
   nginx:
     externalTrafficPolicy: Cluster
     tunnel:
-      expose: false
+      expose: true
   rsyslog:
     tunnel:
-      expose: false
+      expose: true
   tunnel:
-    enabled: false
+    enabled: true
     mode: server
   client-network:
-    enabled: false
+    enabled: true
   # Component selector - Probes
   actionscript:
     enabled: false

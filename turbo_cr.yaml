@@ -79,7 +79,7 @@ spec:
   azure:
     enabled: true
   webhooks:
-    enabled: false
+    enabled: true
   actionscripts:
     enabled: false
   # Embedded Reporting

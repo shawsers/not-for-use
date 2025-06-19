@@ -25,7 +25,7 @@ spec:
   # externalDbIP: 10.0.2.15
   # externalTimescaleDBIP: 10.0.2.15
   # enableExternalSecrets: true
-    storageClassName: managed
+    storageClassName: default
   # storageClassName: azurefile-csi
     deploymentMode: HYBRID_SAAS
     # deploymentModes available: HYBRID_SAAS, SERVER, SAAS_TRIAL, CLOUDABILITY_PREMIUM

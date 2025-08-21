@@ -81,6 +81,12 @@ spec:
   #  enabled: false
   azure:
     enabled: true
+  aws:
+    enabled: true
+  newrelic:
+    enabled: true
+  datadog:
+    enabled: true
   webhooks:
     enabled: true
   actionscripts:
@@ -96,6 +102,6 @@ spec:
   reporting:
     enabled: false
   cloudability:
-    enabled: true
+    enabled: false
   apptio-sftp:
-    enabled: true
+    enabled: false

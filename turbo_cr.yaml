@@ -105,5 +105,3 @@ spec:
     enabled: false
   cloudability:
     enabled: false
-  apptio-sftp:
-    enabled: false

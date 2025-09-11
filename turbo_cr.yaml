@@ -85,6 +85,8 @@ spec:
     enabled: true
   newrelic:
     enabled: true
+  apptio-sftp:
+    enabled: true
   datadog:
     enabled: true
   webhooks:

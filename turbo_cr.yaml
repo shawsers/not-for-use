@@ -84,11 +84,11 @@ spec:
   aws:
     enabled: true
   newrelic:
-    enabled: true
+    enabled: false
   apptio-sftp:
     enabled: true
   datadog:
-    enabled: true
+    enabled: false
   webhooks:
     enabled: true
   actionscripts:

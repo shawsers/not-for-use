@@ -21,7 +21,7 @@ spec:
     tag: 8.17.5
     PullPolicy: always
     telemetry:
-      enabled: true
+      enabled: false
   # externalIP: 10.0.2.15
   # externalDbIP: 10.0.2.15
   # externalTimescaleDBIP: 10.0.2.15

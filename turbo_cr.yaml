@@ -18,7 +18,7 @@ spec:
     # imageUsername: 
     # imagePassword: 
     repository: icr.io/cpopen/turbonomic
-    tag: 8.17.5
+    tag: 8.18.0
     PullPolicy: always
     telemetry:
       enabled: false
@@ -108,4 +108,4 @@ spec:
   reporting:
     enabled: false
   cloudability:
-    enabled: false
+    enabled: true

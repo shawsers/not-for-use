@@ -80,13 +80,13 @@ spec:
   #suspend:
   #  enabled: false
   azure:
-    enabled: false
+    enabled: true
   aws:
     enabled: false
   hyperv:
-    enabled: true
+    enabled: false
   vmm:
-    enabled: true
+    enabled: false
   newrelic:
     enabled: false
   apptio-sftp:

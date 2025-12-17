@@ -95,6 +95,8 @@ spec:
     enabled: false
   webhooks:
     enabled: true
+  openstack:
+    enabled: true
   actionscripts:
     enabled: false
   # Embedded Reporting

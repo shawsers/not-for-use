@@ -18,7 +18,7 @@ spec:
     # imageUsername: 
     # imagePassword: 
     repository: icr.io/cpopen/turbonomic
-    tag: 8.18.3-SNAPSHOT
+    tag: 8.18.4-SNAPSHOT
     PullPolicy: always
     telemetry:
       enabled: false
@@ -28,7 +28,7 @@ spec:
   # enableExternalSecrets: true
     storageClassName: default
   # storageClassName: azurefile-csi
-    deploymentMode: HYBRID_SAAS
+    deploymentMode: CLOUDABILITY_PREMIUM
     # deploymentModes available: HYBRID_SAAS, SERVER, SAAS_TRIAL, CLOUDABILITY_PREMIUM
   properties:
     extractor:
@@ -93,12 +93,14 @@ spec:
     enabled: true
   datadog:
     enabled: false
+  dynatrace:
+    enabled: true
   webhooks:
     enabled: true
   openstack:
     enabled: true
   actionscripts:
-    enabled: false
+    enabled: true
   # Embedded Reporting
   timescaledb:
     enabled: false

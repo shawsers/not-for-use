@@ -68,8 +68,6 @@ spec:
   client-network:
     enabled: true
   # Component selector - Probes
-  actionscript:
-    enabled: false
   #oauth2:
   #  enabled: true
   db:
@@ -99,7 +97,7 @@ spec:
     enabled: true
   openstack:
     enabled: true
-  actionscripts:
+  actionscript:
     enabled: true
   # Embedded Reporting
   timescaledb:

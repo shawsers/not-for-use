@@ -79,6 +79,8 @@ spec:
   #  enabled: false
   azure:
     enabled: true
+  kubecost:
+    enabled: true
   aws:
     enabled: false
   hyperv:

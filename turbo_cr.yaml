@@ -97,6 +97,8 @@ spec:
     enabled: false
   dynatrace:
     enabled: true
+  databricks:
+    enabled: true
   webhooks:
     enabled: true
   openstack:

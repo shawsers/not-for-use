@@ -79,6 +79,8 @@ spec:
   #  enabled: false
   azure:
     enabled: true
+  github:
+    enabled: true
   kubecost:
     enabled: false
   aws:

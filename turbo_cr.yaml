@@ -101,6 +101,8 @@ spec:
     enabled: true
   webhooks:
     enabled: true
+  terraform:
+    enabled: true
   openstack:
     enabled: true
   actionscript:

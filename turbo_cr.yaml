@@ -18,7 +18,7 @@ spec:
     # imageUsername: 
     # imagePassword: 
     repository: icr.io/cpopen/turbonomic
-    tag: 8.19.5
+    tag: 8.19.6
     PullPolicy: always
     telemetry:
       enabled: false
@@ -81,8 +81,8 @@ spec:
     enabled: true
   github:
     enabled: true
-  kubecost:
-    enabled: true
+  #kubecost:
+   # enabled: true
   aws:
     enabled: false
   hyperv:

@@ -28,8 +28,8 @@ spec:
   # enableExternalSecrets: true
     storageClassName: managed-csi-premium
   # storageClassName: default
-    deploymentMode: HYBRID_SAAS
-    # deploymentModes available: HYBRID_SAAS, SERVER, SAAS_TRIAL, CLOUDABILITY_PREMIUM, PARKING, FEDRAMP
+    deploymentMode: CLOUDABILITY_PREMIUM
+    # deploymentModes available: HYBRID_SAAS, SERVER, SAAS_TRIAL, CLOUDABILITY_PREMIUM, PARKING, FEDRAMP, CONCERT
   properties:
     extractor:
       grafanaAdminPassword: grafana
@@ -38,7 +38,7 @@ spec:
     market: 
       suspensionThrottlingPerCluster: false
     api:
-      frontdoorDisableOverride: true
+      frontdoorDisableOverride: false
     #global:
     #  featureFlags:
     #    enableMandatoryProbeAuth: false

@@ -18,7 +18,8 @@ spec:
     # imageUsername: 
     # imagePassword: 
     repository: icr.io/cpopen/turbonomic
-    tag: 8.20.1
+    tag: 108.19.0
+    #tag: 8.20.1
     PullPolicy: always
     telemetry:
       enabled: false
@@ -28,7 +29,7 @@ spec:
   # enableExternalSecrets: true
     storageClassName: managed-csi-premium
   # storageClassName: default
-    deploymentMode: HYBRID_SAAS
+    deploymentMode: FEDRAMP
     # deploymentModes available: HYBRID_SAAS, SERVER, SAAS_TRIAL, CLOUDABILITY_PREMIUM, PARKING, FEDRAMP, CONCERT
   properties:
     extractor:

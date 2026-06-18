@@ -18,7 +18,7 @@ spec:
     # imageUsername: 
     # imagePassword: 
     repository: icr.io/cpopen/turbonomic
-    tag: 8.20.2-SNAPSHOT
+    tag: 8.17.6
     PullPolicy: always
     telemetry:
       enabled: false
@@ -97,18 +97,16 @@ spec:
     enabled: false
   dynatrace:
     enabled: false
-  databricks:
-    enabled: true
+  #databricks:
+  #  enabled: true
   webhooks:
     enabled: true
-  terraform:
-    enabled: true
-  openstack:
-    enabled: true
+  #terraform:
+  #  enabled: true
   actionscript:
     enabled: false
-  ibmcloud:
-    enabled: true
+  #ibmcloud:
+  #  enabled: true
   # Embedded Reporting
   timescaledb:
     enabled: false
@@ -121,5 +119,5 @@ spec:
     enabled: false
   cloudability:
     enabled: false
-  oci:
-    enabled: true
+  #oci:
+  #  enabled: true

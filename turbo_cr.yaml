@@ -18,7 +18,7 @@ spec:
     # imageUsername: 
     # imagePassword: 
     repository: icr.io/cpopen/turbonomic
-    tag: 8.19.6
+    tag: 8.20.1
     PullPolicy: always
     telemetry:
       enabled: false
@@ -58,15 +58,15 @@ spec:
   nginx:
     externalTrafficPolicy: Cluster
     tunnel:
-      expose: true
+      expose: false
   rsyslog:
     tunnel:
-      expose: true
+      expose: false
   tunnel:
-    enabled: true
+    enabled: false
     mode: server
   client-network:
-    enabled: true
+    enabled: false
   # Component selector - Probes
   #oauth2:
   #  enabled: true
@@ -80,11 +80,17 @@ spec:
   azure:
     enabled: true
   github:
-    enabled: true
+    enabled: false
   #kubecost:
    # enabled: true
   aws:
     enabled: false
+  clickhouse:
+    enabled: true
+  metrics-processor:
+    enabled: true
+  metrics-store:
+    enabled: true
   hyperv:
     enabled: false
   vmm:
@@ -97,16 +103,16 @@ spec:
     enabled: false
   dynatrace:
     enabled: false
-  #databricks:
-  #  enabled: true
+  databricks:
+    enabled: true
   webhooks:
     enabled: true
-  #terraform:
-  #  enabled: true
+  terraform:
+    enabled: false
   actionscript:
     enabled: false
-  #ibmcloud:
-  #  enabled: true
+  ibmcloud:
+    enabled: true
   # Embedded Reporting
   timescaledb:
     enabled: false
@@ -119,5 +125,5 @@ spec:
     enabled: false
   cloudability:
     enabled: false
-  #oci:
-  #  enabled: true
+  oci:
+    enabled: true

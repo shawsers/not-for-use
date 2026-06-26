@@ -86,11 +86,11 @@ spec:
   aws:
     enabled: false
   clickhouse:
-    enabled: true
+    enabled: false
   metrics-processor:
-    enabled: true
+    enabled: false
   metrics-store:
-    enabled: true
+    enabled: false
   hyperv:
     enabled: false
   vmm:

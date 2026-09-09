@@ -1,4 +1,6 @@
 #Turbo Broadcast in k8s
+#make sure to run "chmod 777 broadcast.sh" before running
+#run the file ./broadcast.sh
 echo "###########################"
 echo "# RUNNING TURBO BROADCAST #"
 echo "###########################"

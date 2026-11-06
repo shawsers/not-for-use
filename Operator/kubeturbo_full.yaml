@@ -249,6 +249,6 @@ metadata:
   namespace: turbo
 type: Opaque
 data:
-  username: a3ViZXR1cmJvCg==
-  password: a3ViZXR1cmJvCg==
+  username: 
+  password: 
 ---

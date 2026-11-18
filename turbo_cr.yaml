@@ -104,7 +104,7 @@ spec:
   dynatrace:
     enabled: false
   databricks:
-    enabled: true
+    enabled: false
   webhooks:
     enabled: true
   terraform:
@@ -112,7 +112,7 @@ spec:
   actionscript:
     enabled: false
   ibmcloud:
-    enabled: true
+    enabled: false
   # Embedded Reporting
   timescaledb:
     enabled: false
@@ -126,6 +126,6 @@ spec:
   cloudability:
     enabled: false
   oci:
-    enabled: true
+    enabled: false
   alerts:
     enabled: true
